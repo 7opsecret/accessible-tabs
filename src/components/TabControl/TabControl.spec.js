@@ -74,11 +74,13 @@ describe('Component: TabControl', () => {
 
         expect(tabControl.element.className).toBe('tab-control tab-control--selected');
         expect(tabControl.element.getAttribute('tabindex')).toBe('0');
+        expect(tabControl.element.getAttribute('aria-selected')).toBe('true');
 
         tabControl.selected = false;
 
         expect(tabControl.element.className).toBe('tab-control');
         expect(tabControl.element.getAttribute('tabindex')).toBe('-1');
+        expect(tabControl.element.getAttribute('aria-selected')).toBe('false');
     });
 
     it('should onClick handler binded and fired when clicked', () => {

@@ -89,15 +89,15 @@ describe('Component: Tabs', () => {
         ];
         const expectedPanelElsAttributes = [
             {
-                class: 'tab-panel',
+                class: 'js-tab-panel tab-panel',
                 hidden: '',
             },
             {
-                class: 'tab-panel',
+                class: 'js-tab-panel tab-panel',
                 hidden: '',
             },
             {
-                class: 'tab-panel tab-panel--selected',
+                class: 'js-tab-panel tab-panel tab-panel--selected',
                 hidden: null,
             }
         ];

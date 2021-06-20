@@ -80,6 +80,7 @@ export default class TabControl {
     toggleSelectedChange() {
         this.element.classList.toggle(TAB_CONTROL_SELECTED_CLASSNAME, this.active);
         this.element.setAttribute('tabindex', this.getTabIndex());
+        this.element.setAttribute('aria-selected', this.active);
     }
 
     bindEvents() {
