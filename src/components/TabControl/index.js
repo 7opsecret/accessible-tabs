@@ -15,7 +15,9 @@ export default class TabControl {
             defaultSelected,
             id,
             title,
-            onClick
+            onClick,
+            onKeyUp,
+            onFocus
         } = {}
     ) {
         assertHtmlElement(element, '[TabControl] Invalid HTML Element (args[0])');
@@ -27,6 +29,8 @@ export default class TabControl {
         this.id          = id;
         this.title       = title;
         this.onClick     = onClick;
+        this.onKeyUp     = onKeyUp;
+        this.onFocus     = onFocus;
         // 5. keypress callback attach to element
 
         this.mount();
@@ -84,8 +88,23 @@ export default class TabControl {
     }
 
     bindEvents() {
-        if (isFunction(this.onClick)) {
-            this.element.addEventListener('click', this.onClick);
-        }
+        [
+            {
+                eventName: 'click',
+                handler: this.onClick,
+            },
+            {
+                eventName: 'keyup',
+                handler: this.onKeyUp
+            },
+            {
+                eventName: 'focus',
+                handler: this.onFocus
+            }
+        ].forEach(({ eventName, handler }) => {
+            if (isFunction(handler)) {
+                this.element.addEventListener(eventName, handler);
+            }
+        });
     }
 }

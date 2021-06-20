@@ -1,4 +1,4 @@
-import { expect } from '@jest/globals';
+import { fireKeyUpEvent } from '~/test-helpers/events';
 import TabControl from '.';
 
 describe('Component: TabControl', () => {
@@ -95,5 +95,35 @@ describe('Component: TabControl', () => {
         tabControl.element.click();
 
         expect(mockOnClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('should onKeyUp handler binded and fired when any key up', () => {
+        const mockOnKeyUp = jest.fn();
+        const tabControl  = new TabControl(
+            controlEl,
+            {
+                onKeyUp: mockOnKeyUp
+            }
+        );
+
+        fireKeyUpEvent(tabControl.element);
+
+        expect(mockOnKeyUp).toHaveBeenCalledTimes(1);
+    });
+
+    it('should onFocus handler binded and fired when focus is set', () => {
+        const mockOnFocus = jest.fn();
+        const tabControl  = new TabControl(
+            controlEl,
+            {
+                onFocus: mockOnFocus
+            }
+        );
+
+        // Note: Focus won't work if element not in document body
+        document.body.appendChild(tabControl.element);
+        tabControl.element.focus();
+
+        expect(mockOnFocus).toHaveBeenCalledTimes(1);
     });
 });
