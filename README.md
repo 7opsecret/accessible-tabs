@@ -23,6 +23,12 @@ For watching:
   $ npm run test:watch
 ```
 
+For full run:
+
+```shell
+  $ npm test
+```
+
 ## Development
 
 You can start local development using the command below in your terminal and paste `http://localhost:1234` into your browser when it's ready.
