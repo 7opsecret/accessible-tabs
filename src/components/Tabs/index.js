@@ -12,22 +12,20 @@ const TABS_BASE_CLASSNAME = 'tabs';
 const PANEL_CSS_SELECTOR  = 'js-tab-panel';
 
 export default class Tabs {
-    constructor(element, options) {
+    constructor(element) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
 
-        // # options
-        // - aria-label
+        this.element          = element;
+        this.tabPanels        = [];
+        this.tabControls      = [];
 
-        // # internal state
-        this.element     = element;
-        this.tabPanels   = [];
-        this.tabControls = [];
-
-        // Setup Panels and Controls
         this.mount();
     }
 
     mount() {
+        if (!this.element.id) {
+            console.warn('[Tabs] You don\'t have an unique "id", you will be missing the feature to keep your last active tab state.')
+        }
         this.setDefaultCssClasses();
         this.setupPanelsAndControls();
     }
@@ -83,10 +81,14 @@ export default class Tabs {
     }
 
     renderTabControls(tabControlsFragment) {
+        const tablistLabel         = this.element.dataset.tablistLabel;
         const tabControlsContainer = document.createElement('div');
         tabControlsContainer.className = 'tab-list';
         tabControlsContainer.setAttribute('role', 'tablist');
         tabControlsContainer.appendChild(tabControlsFragment);
+        if (tablistLabel) {
+            tabControlsContainer.setAttribute('aria-label', tablistLabel);
+        }
         this.element.insertBefore(tabControlsContainer, this.element.firstChild);
     }
 

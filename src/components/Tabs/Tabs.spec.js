@@ -8,7 +8,8 @@ describe('Component: Tabs', () => {
         document.body.innerHTML = [...new Array(2)]
             .map((_, index) => tabsHtmlFixture({
                 id: `tab-${index + 1}`,
-                tabsTitle: `Accessible Tab ${index + 1}`
+                heading: `Accessible Tab ${index + 1}`,
+                tabListLabel: index === 0 ? 'Only first with tablist label' : ''
             }))
             .join('');
     });
@@ -47,5 +48,20 @@ describe('Component: Tabs', () => {
 
         expect(totalPanelsUniqueId).toBe(expectedtotalPanelsIds);
         expect(allPanelsHaveAssociatedControl).toBe(true);
+    });
+
+    it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
+        const getTablistAriaLabel = tabs =>
+            tabs.element
+                .querySelector('.tab-list')
+                .getAttribute('aria-label');
+        const tab1El = document.getElementById('tab-1');
+        const tab2El = document.getElementById('tab-2');
+
+        const tabs1 = new Tabs(tab1El);
+        const tabs2 = new Tabs(tab2El);
+
+        expect(getTablistAriaLabel(tabs1)).toBe('Only first with tablist label');
+        expect(getTablistAriaLabel(tabs2)).toBeNull();
     });
 });

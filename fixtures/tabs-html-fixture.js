@@ -1,6 +1,7 @@
 export const tabsHtmlFixture = ({
     id = 'tab',
-    tabsTitle = 'Accessible Tab',
+    heading = 'Accessible Tab',
+    tabListLabel = 'aria label on tab list',
     panels = [ { title: 'Tab 1' }, { title: 'Tab 2' }, { title: 'Tab 3' } ]
 } = {}) => {
     const panelsHtml = panels
@@ -14,8 +15,8 @@ export const tabsHtmlFixture = ({
         .join('');
 
     return `
-        <h2>${tabsTitle}</h2>
-        <div id="${id}" label="${tabsTitle}">
+        <h2>${heading}</h2>
+        <div id="${id}" data-tablist-label="${tabListLabel}">
             ${panelsHtml}
         </div>
     `;
