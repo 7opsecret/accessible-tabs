@@ -3,12 +3,7 @@ import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 const TABS_BASE_CLASSNAME = 'tabs';
 
 export default class Tabs {
-    constructor(
-        element,
-        options
-    ) {
-        // # element
-        // 1. Check element is HTMLElement, if not throw an error
+    constructor(element, options) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
 
         // # options

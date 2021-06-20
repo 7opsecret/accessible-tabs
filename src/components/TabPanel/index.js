@@ -1,27 +1,69 @@
-class TabPanel {
-    constructor(element, options) {
-        // # element
-        // 1. Check element is HTMLElement, if not throw an error
+import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 
-        // # options
-        // 1. defaultSelected - on init selected state assign to internal active state
-        // 2. associate id - id for aria-controls
-        // 3. element id - id for button
+// Util(s):
+import { setAttributes } from '~/src/utils/dom';
 
-        // Setup element attributes with initial state:
-        // - role "tabpanel"
-        // - id
-        // - tabindex
-        // - aria-labelledby - options.associateId
-        // - hidden
+const TAB_PANEL_BASE_CLASSNAME     = 'tab-panel';
+const TAB_PANEL_SELECTED_CLASSNAME = `${TAB_PANEL_BASE_CLASSNAME}--selected`;
+
+export default class TabPanel {
+    constructor(
+        element,
+        {
+            defaultSelected,
+            associateId,
+            id
+        } = {}
+    ) {
+        assertHtmlElement(element, '[TabPanel] Invalid HTML Element (args[0])');
+
+        this.element     = element;
+        this.active      = defaultSelected;
+        this.associateId = associateId;
+        this.id          = id;
+
+        this.mount();
     }
 
     get selected() {
-        // Get local active / selected state
+        return this.active;
     }
 
     set selected(isSelected) {
-        // 1. Update local active / selected state
-        // 2. Update element's accessibility attributes
+        this.active = isSelected;
+        this.toggleSelectedChange();
+    }
+
+    mount() {
+        this.setDefaultCssClasses();
+        this.setA11yAttributes();
+    }
+
+    setDefaultCssClasses() {
+        let classes = [ TAB_PANEL_BASE_CLASSNAME ];
+
+        if(this.active) {
+            classes.push(TAB_PANEL_SELECTED_CLASSNAME);
+        }
+
+        this.element.classList.add(...classes);
+    }
+
+    setA11yAttributes() {
+        setAttributes(
+            this.element,
+            {
+                'aria-labelledby': this.associateId,
+                id: this.id,
+                role: 'tabpanel',
+                tabindex: '0'
+            }
+        )
+        this.element.hidden = !this.active;
+    }
+
+    toggleSelectedChange() {
+        this.element.classList.toggle(TAB_PANEL_SELECTED_CLASSNAME, this.active);
+        this.element.hidden = !this.active;
     }
 }

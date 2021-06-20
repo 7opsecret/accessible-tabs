@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import Tabs from '.';
 import { tabsHtmlFixture } from '~/fixtures/tabs-html-fixture';
 
