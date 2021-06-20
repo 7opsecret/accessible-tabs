@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "parcel src/demo.html",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "keywords": [],

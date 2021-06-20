@@ -1,22 +1,34 @@
-class Tabs {
+import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
+
+const TABS_BASE_CLASSNAME = 'tabs';
+
+export default class Tabs {
     constructor(
         element,
         options
     ) {
         // # element
         // 1. Check element is HTMLElement, if not throw an error
+        assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
 
         // # options
+        // - aria-label
 
         // # internal state
-        // 1. tabPanel instances
-        // 2. tabControl instances
+        this.element     = element;
+        this.tabPanels   = [];
+        this.tabControls = [];
 
         // Setup Panels and Controls
+        this.mount();
+    }
+
+    mount() {
+        this.setupPanelsAndControls();
     }
 
     setupPanelsAndControls() {
-        // 1. on HTML have a main wrapper, passing element into class as root. add 'tabs' class
+        this.element.classList.add(TABS_BASE_CLASSNAME);
         // 2. within wrapper, render each panels with:
         //    - class "js-tab-panel"
         //    - Tab control title will be presented by data atrribute "data-tab-title"
