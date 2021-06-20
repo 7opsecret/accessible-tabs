@@ -1,27 +1,90 @@
-class TabControl {
-    constructor(element, options) {
-        // # element
-        // 1. Check element is HTMLElement, if not throw an error
+// Exception(s) Handling:
+import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 
-        // # options
-        // 1. defaultSelected - on init selected state assign to internal active state
-        // 2. associate id - id for aria-controls
-        // 3. element id - id for button
-        // 4. onClick callback attach to element
+// Util(s):
+import { setAttributes } from '~/src/utils/dom';
+import { isFunction } from '~/src/utils/assert';
+
+export const TAB_CONTROL_BASE_CLASSNAME = 'tab-control';
+const TAB_CONTROL_SELECTED_CLASSNAME = `${TAB_CONTROL_BASE_CLASSNAME}--selected`;
+export default class TabControl {
+    constructor(
+        element,
+        {
+            associateId,
+            defaultSelected,
+            id,
+            title,
+            onClick
+        } = {}
+    ) {
+        assertHtmlElement(element, '[TabControl] Invalid HTML Element (args[0])');
+
+        this.element     = element;
+        this.active      = Boolean(defaultSelected);
+        this.associateId = associateId;
+        this.element     = element;
+        this.id          = id;
+        this.title       = title;
+        this.onClick     = onClick;
         // 5. keypress callback attach to element
 
-        // Setup element attributes with initial state:
-        // - aria-selected - set from initial active / selected state
-        // - aria-controls - options.associateId
-        // - role
+        this.mount();
     }
 
     get selected() {
-        // Get local active / selected state
+        return this.active;
     }
 
     set selected(isSelected) {
-        // 1. Update local active / selected state
-        // 2. Update element's accessibility attributes
+        this.active = isSelected;
+        this.toggleSelectedChange();
+    }
+
+    mount() {
+        this.element.textContent = this.title;
+        this.setDefaultCssClasses();
+        this.setA11yAttributes();
+        this.bindEvents();
+    }
+
+    setDefaultCssClasses() {
+        let classes = [ TAB_CONTROL_BASE_CLASSNAME ];
+
+        if(this.active) {
+            classes.push(TAB_CONTROL_SELECTED_CLASSNAME);
+        }
+
+        this.element.classList.add(...classes);
+    }
+
+    setA11yAttributes() {
+        setAttributes(
+            this.element,
+            {
+                'aria-controls': this.associateId,
+                'aria-selected': this.active,
+                id: this.id,
+                role: 'tab',
+                tabindex: this.getTabIndex()
+            }
+        )
+    }
+
+    getTabIndex() {
+        return this.active
+            ? '0'
+            : '-1';
+    }
+
+    toggleSelectedChange() {
+        this.element.classList.toggle(TAB_CONTROL_SELECTED_CLASSNAME, this.active);
+        this.element.setAttribute('tabindex', this.getTabIndex());
+    }
+
+    bindEvents() {
+        if (isFunction(this.onClick)) {
+            this.element.addEventListener('click', this.onClick);
+        }
     }
 }

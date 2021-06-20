@@ -19,7 +19,7 @@ export default class TabPanel {
         assertHtmlElement(element, '[TabPanel] Invalid HTML Element (args[0])');
 
         this.element     = element;
-        this.active      = defaultSelected;
+        this.active      = Boolean(defaultSelected);
         this.associateId = associateId;
         this.id          = id;
 

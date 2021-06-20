@@ -44,7 +44,7 @@ export default class Tabs {
         // 4. setup tablist container and append all tab controls element to tablist container
         // 5. prepend tablist container (with tab controls) to wrapper
 
-        const panelEls = this.element.getElementsByClassName(PANEL_CSS_SELECTOR);
+        const panelEls = this.element.getElementsByClassName('js-tab-panel');
         if (!panelEls.length) return;
 
         [...panelEls].forEach((panelEl, index) => {

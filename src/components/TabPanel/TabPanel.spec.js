@@ -65,10 +65,7 @@ describe('Component: TabPanel', () => {
     });
 
     it('should element attributes changed as expected when instance selected state is updated', () => {
-        const tabPanel = new TabPanel(
-            panelEl,
-            WITHOUT_DEFAULT_SELECTED_OPTIONS
-        );
+        const tabPanel = new TabPanel(panelEl);
 
         tabPanel.selected = true;
 
