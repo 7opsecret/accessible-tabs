@@ -5,12 +5,14 @@ import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 import TabControl, { TAB_CONTROL_BASE_CLASSNAME } from '~/src/components/TabControl';
 import TabPanel, { TAB_PANEL_BASE_CLASSNAME } from '~/src/components/TabPanel';
 
+// Enum(s):
+import { KEY, DIRECTION } from '~/src/enums/key-code';
+
 // Util(s):
 import { uid } from '../../utils/uid';
 
 const TABS_BASE_CLASSNAME = 'tabs';
 const PANEL_CSS_SELECTOR  = 'js-tab-panel';
-
 export default class Tabs {
     constructor(element) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
@@ -39,7 +41,7 @@ export default class Tabs {
         const panelEls            = this.element.getElementsByClassName(PANEL_CSS_SELECTOR);
         if (!panelEls.length) return;
 
-        [...panelEls].forEach((panelEl, index) => {
+        [ ...panelEls ].forEach((panelEl, index) => {
             const id              = panelEl.id || uid();
             const defaultSelected = index === 0
             const tabControlId    = `${TAB_CONTROL_BASE_CLASSNAME}-${id}`;
@@ -57,8 +59,9 @@ export default class Tabs {
                 defaultSelected,
                 id: tabControlId,
                 title: tabTitle,
-                onClick: this.handleTabControlClick.bind(this),
-                // TODO: this.handleTabControlKeyPressed
+                onClick: this.handleTabControlClickAndFocus,
+                onKeyUp: this.handleTabControlKeyUp,
+                onFocus: this.handleTabControlClickAndFocus
             };
 
             this.addTabPanelInstance(tabPanelOptions, panelEl);
@@ -96,6 +99,10 @@ export default class Tabs {
         return this.tabControls.find(({ id }) => id === matchId);
     }
 
+    findTabControlIndexById(matchId) {
+        return this.tabControls.findIndex(({ id }) => id === matchId);
+    }
+
     toggleTabControlsSelectedStateById(selectedTabControlId) {
         this.tabControls.forEach((tabControl) => {
             tabControl.selected = tabControl.id === selectedTabControlId;
@@ -108,16 +115,56 @@ export default class Tabs {
         });
     }
 
-    handleTabControlClick(e) {
-        const selectedTabControlId = e.currentTarget.id;
-        const selectedTabControl   = this.findTabControlById(selectedTabControlId);
-        this.toggleTabControlsSelectedStateById(selectedTabControl.id);
-        this.toggleTabPanelsSelectedStateById(selectedTabControl.associateId);
+    handleTabControlClickAndFocus = (e) => {
+        const selectedTabControl = this.findTabControlById(e.currentTarget.id);
+        this.selectNextTabByControl(selectedTabControl);
         // update tab panel and control state and attributes
         // update browser history with tabs component's active tab
     }
 
-    handleTabControlKeyPressed(e) {
+    selectNextTabByControl(nextTabControl) {
+        this.toggleTabControlsSelectedStateById(nextTabControl.id);
+        this.toggleTabPanelsSelectedStateById(nextTabControl.associateId);
+    }
+
+    setFocusOnNextControlByDirection(e, directionKeyCode) {
+        const currentTabControlIndex = this.findTabControlIndexById(e.currentTarget.id);
+        const nextIndex = DIRECTION[directionKeyCode] + currentTabControlIndex;
+        this.setFocusOnNextControlByIndex(nextIndex);
+    }
+
+    setFocusOnNextControlByIndex(nextIndex) {
+        let _nextIndex = nextIndex;
+
+        if (_nextIndex < 0) {
+            _nextIndex = this.tabControls.length - 1;
+        }
+
+        if (_nextIndex > this.tabControls.length - 1) {
+            _nextIndex = 0
+        }
+
+        this.tabControls[_nextIndex].element.focus();
+    }
+
+    handleTabControlKeyUp = (e) => {
+        switch (e.keyCode) {
+            case KEY.LEFT:
+                this.setFocusOnNextControlByDirection(e, KEY.LEFT);
+                break;
+
+            case KEY.RIGHT:
+                this.setFocusOnNextControlByDirection(e, KEY.RIGHT);
+                break;
+
+            case KEY.HOME:
+                this.setFocusOnNextControlByIndex(0);
+                break;
+
+            case KEY.END:
+                this.setFocusOnNextControlByIndex(this.tabControls.length - 1);
+                break;
+        }
         // update tab panel and control state and attributes
         // update browser history with tabs component's active tab
     }
