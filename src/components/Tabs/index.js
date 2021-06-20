@@ -1,3 +1,5 @@
+import './styles.css';
+
 // Exception(s) Handling:
 import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 
@@ -134,14 +136,15 @@ export default class Tabs {
     }
 
     setFocusOnNextControlByIndex(nextIndex) {
+        const lastIndex = this.tabControls.length - 1;
         let _nextIndex = nextIndex;
 
         if (_nextIndex < 0) {
-            _nextIndex = this.tabControls.length - 1;
+            _nextIndex = lastIndex - 1;
         }
 
-        if (_nextIndex > this.tabControls.length - 1) {
-            _nextIndex = 0
+        if (_nextIndex > lastIndex - 1) {
+            _nextIndex = 0;
         }
 
         this.tabControls[_nextIndex].element.focus();
