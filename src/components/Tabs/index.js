@@ -37,8 +37,6 @@ export default class Tabs {
     }
 
     setupPanelsAndControls() {
-        // 3. find all panel elements and create tab control and panel instances with handler attached
-        //    along with uid for both so that they'are associated to each other
         const tabControlsFragment = new DocumentFragment();
         const panelEls            = this.element.getElementsByClassName(PANEL_CSS_SELECTOR);
         if (!panelEls.length) return;
@@ -100,5 +98,11 @@ export default class Tabs {
     handleTabControlKeyPressed(e) {
         // update tab panel and control state and attributes
         // update browser history with tabs component's active tab
+    }
+
+    updateHistory() {
+        // TODO:
+        // - Update url so that can direct load page with tabs pre-selected
+        // - Go back and forward (browser) will show each active state change history
     }
 }
