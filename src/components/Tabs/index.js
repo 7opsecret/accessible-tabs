@@ -1,11 +1,12 @@
 // Exception(s) Handling:
 import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 
+// Component(s):
+import TabControl, { TAB_CONTROL_BASE_CLASSNAME } from '~/src/components/TabControl';
+import TabPanel, { TAB_PANEL_BASE_CLASSNAME } from '~/src/components/TabPanel';
+
 // Util(s):
 import { uid } from '../../utils/uid';
-
-// Component(s):
-import TabPanel, { TAB_PANEL_BASE_CLASSNAME } from '~/src/components/TabPanel';
 
 const TABS_BASE_CLASSNAME = 'tabs';
 const PANEL_CSS_SELECTOR  = 'js-tab-panel';
@@ -36,36 +37,59 @@ export default class Tabs {
     }
 
     setupPanelsAndControls() {
-        // 2. within wrapper, render each panels with:
-        //    - class "js-tab-panel"
-        //    - Tab control title will be presented by data atrribute "data-tab-title"
         // 3. find all panel elements and create tab control and panel instances with handler attached
         //    along with uid for both so that they'are associated to each other
-        // 4. setup tablist container and append all tab controls element to tablist container
-        // 5. prepend tablist container (with tab controls) to wrapper
-
-        const panelEls = this.element.getElementsByClassName('js-tab-panel');
+        const tabControlsFragment = new DocumentFragment();
+        const panelEls            = this.element.getElementsByClassName(PANEL_CSS_SELECTOR);
         if (!panelEls.length) return;
 
         [...panelEls].forEach((panelEl, index) => {
-            const id           = panelEl.id || uid();
-            const tabControlId = `tab-control-${id}`;
-            const tabPanelId   = `${TAB_PANEL_BASE_CLASSNAME}-${id}`;
+            const id              = panelEl.id || uid();
+            const defaultSelected = index === 0
+            const tabControlId    = `${TAB_CONTROL_BASE_CLASSNAME}-${id}`;
+            const tabPanelId      = `${TAB_PANEL_BASE_CLASSNAME}-${id}`;
+            const tabTitle        = panelEl.dataset.tabTitle || 'No title tab';
 
             // Instance Options:
             const tabPanelOptions = {
-                defaultSelected: index === 0,
+                defaultSelected,
                 associateId: tabControlId,
                 id: tabPanelId
             };
+            const tabControlOptions = {
+                associateId: tabPanelId,
+                defaultSelected,
+                id: tabControlId,
+                title: tabTitle,
+                onClick: this.handleTabControlClick.bind(this),
+                // TODO: this.handleTabControlKeyPressed
+            };
 
-            this.addTabPanelInstance(panelEl, tabPanelOptions);
+            this.addTabPanelInstance(tabPanelOptions, panelEl);
+            this.addTabControlInstance(tabControlOptions, tabControlsFragment);
         });
+
+        this.renderTabControls(tabControlsFragment);
     }
 
-    addTabPanelInstance(panelEl, options) {
+    addTabPanelInstance(options, panelEl) {
         const tabPanel = new TabPanel(panelEl, options);
         this.tabPanels.push(tabPanel);
+    }
+
+    addTabControlInstance(options, tabControlsFragment) {
+        const controlEl  = document.createElement('button');
+        const tabControl = new TabControl(controlEl, options);
+        this.tabControls.push(tabControl);
+        tabControlsFragment.appendChild(tabControl.element);
+    }
+
+    renderTabControls(tabControlsFragment) {
+        const tabControlsContainer = document.createElement('div');
+        tabControlsContainer.className = 'tab-list';
+        tabControlsContainer.setAttribute('role', 'tablist');
+        tabControlsContainer.appendChild(tabControlsFragment);
+        this.element.insertBefore(tabControlsContainer, this.element.firstChild);
     }
 
     handleTabControlClick(e) {

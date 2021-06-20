@@ -25,18 +25,27 @@ describe('Component: Tabs', () => {
         expect(tab1El.className).toBe('tabs');
     });
 
-    it('should multiple Tabs instances all panels have no duplicate id', () => {
+    it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
         const tab1El = document.getElementById('tab-1');
         const tab2El = document.getElementById('tab-2');
 
         new Tabs(tab1El);
         new Tabs(tab2El);
 
-        const allPanelEls      = document.getElementsByClassName('js-tab-panel');
-        const allPanelElsId    = [...allPanelEls].map(({ id }) => id);
-        const totalUniqueId    = new Set(allPanelElsId).size;
-        const expectedtotalIds = allPanelEls.length
+        const allPanelEls                        = document.getElementsByClassName('js-tab-panel');
+        const allPanelElsId                      = [...allPanelEls].map(({ id }) => id);
+        const allControlsIdFromPanelAssociatedId = [...allPanelEls].map((panelEl) => panelEl.getAttribute('aria-labelledby'));
+        const totalPanelsUniqueId                = new Set(allPanelElsId).size;
+        const expectedtotalPanelsIds             = allPanelEls.length;
+        const allPanelsHaveAssociatedControl     = allControlsIdFromPanelAssociatedId.every(controlId => {
+            const controlEl = document.getElementById(controlId);
+            const [ , , idToMatch ] = controlId.split('-');
+            return controlEl.classList.contains('tab-control')
+                && controlEl.getAttribute('role') === 'tab'
+                && controlEl.getAttribute('aria-controls') === `tab-panel-${idToMatch}`
+        });
 
-        expect(totalUniqueId).toBe(expectedtotalIds);
+        expect(totalPanelsUniqueId).toBe(expectedtotalPanelsIds);
+        expect(allPanelsHaveAssociatedControl).toBe(true);
     });
 });
