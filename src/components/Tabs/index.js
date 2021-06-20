@@ -15,9 +15,9 @@ export default class Tabs {
     constructor(element) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
 
-        this.element          = element;
-        this.tabPanels        = [];
-        this.tabControls      = [];
+        this.element     = element;
+        this.tabPanels   = [];
+        this.tabControls = [];
 
         this.mount();
     }
@@ -92,7 +92,27 @@ export default class Tabs {
         this.element.insertBefore(tabControlsContainer, this.element.firstChild);
     }
 
+    findTabControlById(matchId) {
+        return this.tabControls.find(({ id }) => id === matchId);
+    }
+
+    toggleTabControlsSelectedStateById(selectedTabControlId) {
+        this.tabControls.forEach((tabControl) => {
+            tabControl.selected = tabControl.id === selectedTabControlId;
+        });
+    }
+
+    toggleTabPanelsSelectedStateById(selectedTabPanelId) {
+        this.tabPanels.forEach((tabPanel) => {
+            tabPanel.selected = tabPanel.id === selectedTabPanelId;
+        });
+    }
+
     handleTabControlClick(e) {
+        const selectedTabControlId = e.currentTarget.id;
+        const selectedTabControl   = this.findTabControlById(selectedTabControlId);
+        this.toggleTabControlsSelectedStateById(selectedTabControl.id);
+        this.toggleTabPanelsSelectedStateById(selectedTabControl.associateId);
         // update tab panel and control state and attributes
         // update browser history with tabs component's active tab
     }
