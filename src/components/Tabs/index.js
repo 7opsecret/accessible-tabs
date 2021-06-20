@@ -140,10 +140,10 @@ export default class Tabs {
         let _nextIndex = nextIndex;
 
         if (_nextIndex < 0) {
-            _nextIndex = lastIndex - 1;
+            _nextIndex = lastIndex;
         }
 
-        if (_nextIndex > lastIndex - 1) {
+        if (_nextIndex > lastIndex) {
             _nextIndex = 0;
         }
 
