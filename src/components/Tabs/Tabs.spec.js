@@ -107,7 +107,6 @@ describe('Component: Tabs', () => {
         const tabs1           = new Tabs(tab1El);
         const tabControlEls   = tabs1.element.getElementsByClassName('tab-control');
         const tabPanelsEls    = tabs1.element.getElementsByClassName('js-tab-panel');
-
         tabControlEls[indexToSelect].click();
 
         const controlsAttributes = getSelectedAttributesFromElements(
@@ -116,10 +115,33 @@ describe('Component: Tabs', () => {
         );
         const panelsAttributes   = getSelectedAttributesFromElements(
             tabPanelsEls,
-            ['class', 'hidden' ]
+            [ 'class', 'hidden' ]
         );
-
         expect(controlsAttributes).toEqual(expectedControlElsAttributes);
         expect(panelsAttributes).toEqual(expectedPanelElsAttributes);
+    });
+
+    it('should selected state render correctly when "Home" key up event is fired', () => {
+
+    });
+
+    it('should selected state render correctly when "End" key up event is fired', () => {
+
+    });
+
+    it('should selected state render correctly when "Left" key up event is fired', () => {
+
+    });
+
+    it('should selected state render correctly when "Right" key up event is fired', () => {
+
+    });
+
+    it('should selected state be last element and rest render correctly when selected is first element and "Left" key up event is fired', () => {
+
+    });
+
+    it('should selected state be first element and rest render correctly when selected is last element and "Right" key up event is fired', () => {
+
     });
 });
