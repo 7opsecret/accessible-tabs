@@ -86,7 +86,7 @@ describe('Component: Tabs', () => {
         expect(allPanelsHaveAssociatedControl).toBe(true);
     });
 
-    it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
+    it('should tablist element have "aria-label" when "data-tablist-label" is specified', () => {
         const getTablistAriaLabel = tabs =>
             tabs.element
                 .querySelector('.tab-list')
@@ -341,7 +341,7 @@ describe('Component: Tabs', () => {
         expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
     });
 
-    it('should selected state be last element and rest render correctly when selected is first element and "Left" key up event is fired', () => {
+    it('should selected state render correctly when first element was selected and "Left" key up event is fired', () => {
         const expectedControlElsAttributes = [
             {
                 'aria-selected': 'false',
@@ -386,7 +386,7 @@ describe('Component: Tabs', () => {
         expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
     });
 
-    it('should selected state be first element and rest render correctly when selected is last element and "Right" key up event is fired', () => {
+    it('should selected state render correctly when last element was selected and "Right" key up event is fired', () => {
         const expectedControlElsAttributes = [
             {
                 'aria-selected': 'true',
