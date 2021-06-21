@@ -61,9 +61,8 @@ export default class Tabs {
                 defaultSelected,
                 id: tabControlId,
                 title: tabTitle,
-                onClick: this.handleTabControlClickAndFocus,
                 onKeyUp: this.handleTabControlKeyUp,
-                onFocus: this.handleTabControlClickAndFocus
+                onFocus: this.handleTabControlFocus
             };
 
             this.addTabPanelInstance(tabPanelOptions, panelEl);
@@ -79,7 +78,7 @@ export default class Tabs {
     }
 
     addTabControlInstance(options, tabControlsFragment) {
-        const controlEl  = document.createElement('button');
+        const controlEl  = document.createElement('a');
         const tabControl = new TabControl(controlEl, options);
         this.tabControls.push(tabControl);
         tabControlsFragment.appendChild(tabControl.element);
@@ -117,7 +116,7 @@ export default class Tabs {
         });
     }
 
-    handleTabControlClickAndFocus = (e) => {
+    handleTabControlFocus = (e) => {
         const selectedTabControl = this.findTabControlById(e.currentTarget.id);
         this.selectNextTabByControl(selectedTabControl);
         // update tab panel and control state and attributes

@@ -139,6 +139,17 @@ describe('Component: Tabs', () => {
         const tabs1         = new Tabs(tab1El);
         const tabControlEls = tabs1.element.getElementsByClassName('tab-control');
         tabControlEls[indexToSelect].click();
+        /**
+         * Note:
+         * For some reason JSDOM doesn't seems trigger focus on click.
+         * Have tested by appending different elements into body (a, button, input)
+         * but still no luck. This is a temporary solution to be investigate further
+         * in the future.
+         *
+         * Important:
+         * It has been tested on Safari, Edge, Chrome, Firefox cta click does trigger focus.
+         * */
+        tabControlEls[indexToSelect].focus();
 
         const {
             tabControlsAttributes,
