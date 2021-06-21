@@ -1,5 +1,6 @@
 .tab-control {
     box-sizing: border-box;
+    cursor: pointer;
     display: inline-block;
     font-size: 1.2em;
     font-weight: 400;
