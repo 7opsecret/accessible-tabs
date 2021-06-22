@@ -6,6 +6,20 @@ import { fireKeyUpEvent } from '~/test-helpers/events';
 // Enum(s):
 import { KEY } from '~/src/enums/key-code';
 
+// Local Test Helper(s):
+const createTabsInstance = (...args) => () => new Tabs(args);
+
+const createTestTabsAndPanels = (numberOfTabs, numberOfPanels = 3) => {
+    return [ ...new Array(numberOfTabs) ]
+        .map((_, index) => tabsHtmlFixture({
+            id: `tab-${index + 1}`,
+            heading: `Accessible Tab ${index + 1}`,
+            tabListLabel: index === 0 ? 'Only first with tablist label' : '',
+            panels: [ ...new Array(numberOfPanels) ].map( (panel, panelIndex) => ({ id: `panel-${index}-${panelIndex}`, dataTabTitle: `Tab title ${index}-${panelIndex}` }))
+        }))
+        .join('');
+}
+
 const getTestAttributesFromTabsInstance = (tabsInstance) => {
     const tabControlEls = tabsInstance.element.getElementsByClassName('tab-control');
     const tabPanelsEls  = tabsInstance.element.getElementsByClassName('js-tab-panel');
@@ -34,21 +48,82 @@ const fireKeyUpEventViaSelectedControl = (
     );
 }
 
+const createExpectedAttributesBySelectedIndex = (totalItems, selectedIndex) => {
+    const tabControlAttributes = {
+        nonSelected: {
+            'aria-selected': 'false',
+            class: 'tab-control',
+            tabindex: '-1',
+        },
+        selected: {
+            'aria-selected': 'true',
+            class: 'tab-control tab-control--selected',
+            tabindex: '0',
+        }
+    };
+    const tabPanelAttributes = {
+        nonSelected: {
+            class: 'js-tab-panel tab-panel',
+            hidden: '',
+        },
+        selected: {
+            class: 'js-tab-panel tab-panel tab-panel--selected',
+            hidden: null,
+        }
+    };
+
+    const generateList = ({
+        selected,
+        nonSelected
+    }) =>
+        [ ...new Array(totalItems) ]
+            .map((_, index) => index === selectedIndex
+                ? selected
+                : nonSelected
+            );
+
+    return {
+        expectedControlElsAttributes: generateList(tabControlAttributes),
+        expectedPanelElsAttributes: generateList(tabPanelAttributes)
+    }
+}
+
+const testKeyUpFiresByTabId = (totalItems, tabId) => ({
+    keyCodesOrderToFire,
+    expectedSelectedIndex
+}) => {
+    const tabs = new Tabs(document.getElementById(tabId));
+    keyCodesOrderToFire.forEach((keyCode) => {
+        fireKeyUpEventViaSelectedControl(tabs, { keyCode });
+    });
+
+    const {
+        tabControlsAttributes,
+        tabPanelsAttributes
+    } = getTestAttributesFromTabsInstance(tabs);
+    const {
+        expectedControlElsAttributes,
+        expectedPanelElsAttributes
+    } = createExpectedAttributesBySelectedIndex(totalItems, expectedSelectedIndex);
+    const expectedSelectedTabControlId = tabs.element.querySelectorAll('.tab-control')[expectedSelectedIndex].id;
+    const expectedQueryString          = `?${tabId}=${expectedSelectedTabControlId}`;
+    expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
+    expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
+    expect(window.location.hash).toBe(`#${tabId}`);
+    expect(window.location.search).toBe(expectedQueryString);
+}
+
 describe('Component: Tabs', () => {
-    const initTabs = (...args) => () => new Tabs(args);
+    const TOTAL_TEST_TAB_PANELS = 3;
+    const tab1KeyUpFiresTest = testKeyUpFiresByTabId(TOTAL_TEST_TAB_PANELS, 'tab-1');
 
     beforeEach(() => {
-        document.body.innerHTML = [...new Array(3)]
-            .map((_, index) => tabsHtmlFixture({
-                id: `tab-${index + 1}`,
-                heading: `Accessible Tab ${index + 1}`,
-                tabListLabel: index === 0 ? 'Only first with tablist label' : ''
-            }))
-            .join('');
+        document.body.innerHTML = createTestTabsAndPanels(2, TOTAL_TEST_TAB_PANELS);
+        history.replaceState({}, '', '/');
     });
 
     it('should throw error if "Tabs" created without valid "element" payload', () => {
-        expect(initTabs()).toThrow('[Tabs] Invalid HTML Element (args[0])');
+        expect(createTabsInstance()).toThrow('[Tabs] Invalid HTML Element (args[0])');
     });
 
     it('should "tab-1" have class "tabs"', () => {
@@ -70,16 +145,17 @@ describe('Component: Tabs', () => {
             ...tabs1.element.getElementsByClassName('js-tab-panel'),
             ...tabs2.element.getElementsByClassName('js-tab-panel')
         ];
+
         const allPanelElsId                      = allPanelEls.map(({ id }) => id);
         const allControlsIdFromPanelAssociatedId = allPanelEls.map((panelEl) => panelEl.getAttribute('aria-labelledby'));
         const totalPanelsUniqueId                = new Set(allPanelElsId).size;
         const expectedtotalPanelsIds             = allPanelEls.length;
         const allPanelsHaveAssociatedControl     = allControlsIdFromPanelAssociatedId.every(controlId => {
             const controlEl = document.getElementById(controlId);
-            const [ , , idToMatch ] = controlId.split('-');
+            const [ , , ...id ] = controlId.split('-');
             return controlEl.classList.contains('tab-control')
                 && controlEl.getAttribute('role') === 'tab'
-                && controlEl.getAttribute('aria-controls') === `tab-panel-${idToMatch}`
+                && controlEl.getAttribute('aria-controls') === `tab-panel-${id.join('-')}`
         });
 
         expect(totalPanelsUniqueId).toBe(expectedtotalPanelsIds);
@@ -102,37 +178,6 @@ describe('Component: Tabs', () => {
     });
 
     it('should click on 3rd tab control button toggle selected state correctly', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            }
-        ];
         const tab1El        = document.getElementById('tab-1');
         const indexToSelect = 2;
 
@@ -155,280 +200,67 @@ describe('Component: Tabs', () => {
             tabControlsAttributes,
             tabPanelsAttributes
         } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
-    });
-
-    it('should selected state render correctly when "Home" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
-
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.RIGHT });
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.HOME });
-
         const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
+            expectedControlElsAttributes,
+            expectedPanelElsAttributes
+        } = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, indexToSelect);
+        const expectedQueryString = `?tab-1=${tabControlEls[indexToSelect].id}`;
         expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
         expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
+        expect(window.location.hash).toBe('#tab-1');
+        expect(window.location.search).toBe(expectedQueryString);
     });
 
-    it('should selected state render correctly when "End" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
-
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.END });
-
-        const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
-    });
-
-    it('should selected state render correctly when "Left" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
-
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.END });
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.LEFT });
-
-        const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
-    });
-
-    it('should selected state render correctly when "Right" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
-
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.RIGHT });
-
-        const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
-    });
+    it.each`
+    keyNameToVerify | keyCodesOrderToFire        | expectedSelectedIndex
+    ${'Home'}       | ${[ KEY.RIGHT, KEY.HOME ]} | ${0}
+    ${'End'}        | ${[ KEY.END ]}             | ${2}
+    ${'Left'}       | ${[ KEY.END, KEY.LEFT ]}   | ${1}
+    ${'Right'}      | ${[ KEY.RIGHT ]}           | ${1}
+    `('should selected state render correctly when "$keyNameToVerify" key up event is fired', tab1KeyUpFiresTest);
 
     it('should selected state render correctly when first element was selected and "Left" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
-
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.LEFT });
-
-        const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
+        tab1KeyUpFiresTest({
+            keyCodesOrderToFire: [ KEY.LEFT ],
+            expectedSelectedIndex: 2
+        });
     });
 
     it('should selected state render correctly when last element was selected and "Right" key up event is fired', () => {
-        const expectedControlElsAttributes = [
-            {
-                'aria-selected': 'true',
-                class: 'tab-control tab-control--selected',
-                tabindex: '0',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            },
-            {
-                'aria-selected': 'false',
-                class: 'tab-control',
-                tabindex: '-1',
-            }
-        ];
-        const expectedPanelElsAttributes = [
-            {
-                class: 'js-tab-panel tab-panel tab-panel--selected',
-                hidden: null,
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            },
-            {
-                class: 'js-tab-panel tab-panel',
-                hidden: '',
-            }
-        ];
-        const tab1El = document.getElementById('tab-1');
+        tab1KeyUpFiresTest({
+            keyCodesOrderToFire: [ KEY.END, KEY.RIGHT ],
+            expectedSelectedIndex: 0
+        });
+    });
 
-        const tabs1 = new Tabs(tab1El);
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.END });
-        fireKeyUpEventViaSelectedControl(tabs1, { keyCode: KEY.RIGHT });
+    it('should selected state render correctly when multiple group tabs selected', () => {
+        const tabs1 = new Tabs(document.getElementById('tab-1'));
+        const tabs2 = new Tabs(document.getElementById('tab-2'));
 
-        const {
-            tabControlsAttributes,
-            tabPanelsAttributes
-        } = getTestAttributesFromTabsInstance(tabs1);
-        expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
-        expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
+        [
+            KEY.END,
+            KEY.LEFT
+        ].forEach((keyCode) => {
+            fireKeyUpEventViaSelectedControl(tabs1, { keyCode });
+        });
+        [
+            KEY.LEFT
+        ].forEach((keyCode) => {
+            fireKeyUpEventViaSelectedControl(tabs2, { keyCode });
+        });
+
+        const expectedTab1Attributes           = getTestAttributesFromTabsInstance(tabs1);
+        const expectedTab1SelectedTabControlId = tabs1.element.querySelectorAll('.tab-control')[1].id;
+        const expectedTab2Attributes           = getTestAttributesFromTabsInstance(tabs2);
+        const expectedTab2SelectedTabControlId = tabs2.element.querySelectorAll('.tab-control')[2].id;
+        const receivedTab1Attributes           = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, 1);
+        const receveidTab2Attributes           = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, 2);
+        const expectedQueryString              = `?tab-1=${expectedTab1SelectedTabControlId}&tab-2=${expectedTab2SelectedTabControlId}`;
+        expect(receivedTab1Attributes.tabControlsAttributes).toEqual(expectedTab1Attributes.expectedControlElsAttributes);
+        expect(receivedTab1Attributes.tabPanelsAttributes).toEqual(expectedTab1Attributes.expectedPanelElsAttributes);
+        expect(receveidTab2Attributes.tabControlsAttributes).toEqual(expectedTab2Attributes.expectedControlElsAttributes);
+        expect(receveidTab2Attributes.tabPanelsAttributes).toEqual(expectedTab2Attributes.expectedPanelElsAttributes);
+        expect(window.location.hash).toBe(`#tab-2`);
+        expect(window.location.search).toBe(expectedQueryString);
     });
 });
