@@ -163,7 +163,7 @@ describe('Component: Tabs', () => {
     });
 
     it('should tablist element have "aria-label" when "data-tablist-label" is specified', () => {
-        const getTablistAriaLabel = tabs =>
+        const getTablistAriaLabel = (tabs) =>
             tabs.element
                 .querySelector('.tab-list')
                 .getAttribute('aria-label');
