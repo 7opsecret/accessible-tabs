@@ -123,7 +123,7 @@ describe('Component: TabControl', () => {
         });
     });
 
-    describe('When "defaultSelected" is false', () => {
+    describe('When "defaultSelected" is falsey', () => {
         it('should render class name correctly when created', () => {
             // Arrange
             const tabControl = new TabControl(
