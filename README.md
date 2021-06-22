@@ -70,6 +70,7 @@ JavaScript:
 TODO:
 - Installation Guide
 - Test Guide
+- Testing url hash and queries for activate tabs on page load with cypress
 - Testing accessibility using browser axe plugin for development
 - Look into automate accessibility audit (e.g. Jest / Cypress) at the end in case running out of time
 - JSDOM does not set focus on clicked item.
