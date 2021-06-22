@@ -1,38 +1,34 @@
-// Component(s):
-import TabControl  from '~/src/components/TabControl';
-import TabPanel from '~/src/components/TabPanel';
-
 // Service(s):
 import { TabItems } from './tab-items';
 
+// Fixture(s):
+import { tabControlsAndPanelsFixtures } from '~/fixtures/tab-controls-and-panels-fixture';
+
+const addChildrenToTabItemsInstance = (children) => (tabItemsInstance) =>
+    children.forEach((child) => tabItemsInstance.addChild(child));
+
 describe('Services: TabItems', () => {
-    const [
-        mockChild1,
-        mockChild2,
-        mockChild3
-    ] = [ ...new Array(3) ].map((_, i) => {
-        const tabPanelElement = document.createElement('div');
-        const tabControlElement = document.createElement('a');
-        const tabPanelOptions = {
-
-        };
-        const tabControlOptions = {
-
-        };
-        return {
-            tabPanel: new TabPanel(tabPanelElement, tabPanelOptions),
-            tabControl: new TabControl(tabControlElement, tabControlOptions)
-        };
-    });
+    const add3ChildrenToTabItemsInstance = addChildrenToTabItemsInstance(
+        tabControlsAndPanelsFixtures(3)
+    );
 
     it('should getter: lastChildIndex return 2 when have 3 children', () => {
+        // Arrange
+        const tabItems = new TabItems();
 
+        // Act
+        add3ChildrenToTabItemsInstance(tabItems);
+
+        // Assert
+        expect(tabItems.lastChildIndex).toBe(2);
     });
 
     it('should #forEach throw error when called without any payload', () => {
+        // Arrange
         const tabItems = new TabItems();
 
-        expect(tabItems.forEach).toBe('...');
+        // Assert
+        expect(() => tabItems.forEach()).toThrow('[TabItems] Invalid callback function');
     });
 
     it.each`
@@ -45,50 +41,133 @@ describe('Services: TabItems', () => {
     `('should #forEach throw error when called with $arg', ({
         arg
     }) => {
+        // Arrange
+        const tabItems = new TabItems();
 
-    });
-
-    it('should #forEach callback function called N times (total number of children) with all children', () => {
-
+        // Assert
+        expect(() => tabItems.forEach(arg)).toThrow('[TabItems] Invalid callback function');
     });
 
     it('should #addChild add both TabPanel and TabControl instances as children as 1 object', () => {
+        // Arrange
+        const tabItems  = new TabItems();
+        const mockChild = tabControlsAndPanelsFixtures(1)[0];
 
+        // Act
+        tabItems.addChild(mockChild);
+
+        // Assert
+        expect(tabItems.children.length).toBe(1);
     });
 
     it('should #addChild throw error when trying to add invalid data type', () => {
+        // Arrange
+        const tabItems = new TabItems();
 
+        // Assert
+        expect(() => tabItems.addChild({}))
+            .toThrow('[TabItems] tabControl needs to be instance of TabControl');
     });
 
-    it('should #addChild throw error when trying to add 1 either one invalid instance', () => {
+    it('should #addChild throw error when trying to add invalid tabPanel', () => {
+        // Arrange
+        const tabItems             = new TabItems();
+        const MockBadClass         = class {};
+        const mockBadClassInstance = new MockBadClass();
+        const { tabControl }       = tabControlsAndPanelsFixtures(1)[0];
 
+        // Assert
+        expect(() => tabItems.addChild({ tabControl, tabPanel: mockBadClassInstance }))
+            .toThrow('[TabItems] tabPanel needs to be instance of TabPanel');
     });
 
-    it('should #findChildByTabControlId return both TabPanel and TabControl instances when matched found', () => {
+    describe('When tabItems instance have 3 children', () => {
+        let tabItems;
 
+        beforeAll(() => {
+            tabItems = new TabItems();
+            add3ChildrenToTabItemsInstance(tabItems);
+        });
+
+        it('should #forEach callback function called 3 times with 3 children', () => {
+            // Arrange
+            const mockCallback = jest.fn();
+
+            // Act
+            tabItems.forEach(mockCallback);
+
+            // Assert
+            expect(mockCallback).toHaveBeenCalledTimes(3);
+        });
+
+        it('should #findChildByTabControlId return both TabPanel and TabControl instances when matched found', () => {
+            // Act
+            const received = tabItems.findChildByTabControlId('tab-control-1');
+
+            // Assert
+            expect(received).toMatchObject({
+                tabPanel: {
+                    id: 'tab-panel-1',
+                    associateId: 'tab-control-1'
+                },
+                tabControl :{
+                    id: 'tab-control-1',
+                    associateId: 'tab-panel-1'
+                }
+            });
+        });
+
+        it('should #findChildByTabControlId return undefined when no matched found', () => {
+            // Act
+            const received = tabItems.findChildByTabControlId('tabx-control-y');
+
+            // Assert
+            expect(received).toBeUndefined();
+        });
+
+        it('should #findChildByIndex return child at specified index when specified index is valid', () => {
+            // Act
+            const received = tabItems.findChildByIndex(2);
+
+            // Assert
+            expect(received).toMatchObject({
+                tabPanel: {
+                    id: 'tab-panel-2',
+                    associateId: 'tab-control-2'
+                },
+                tabControl :{
+                    id: 'tab-control-2',
+                    associateId: 'tab-panel-2'
+                }
+            });
+        });
+
+        it('should #findChildByIndex return undefined when specified index is invalid', () => {
+            // Act
+            const received = tabItems.findChildByIndex(9999);
+
+            // Assert
+            expect(received).toBeUndefined();
+        });
+
+        it('should #findChildIndexByTabControlId return index of matched child when child exist', () => {
+            // Act
+            const received = tabItems.findChildIndexByTabControlId('tab-control-1');
+
+            // Assert
+            expect(received).toBe(1);
+        });
+
+        it('should #findChildIndexByTabControlId return -1 when child not exist', () => {
+            // Act
+            const received = tabItems.findChildIndexByTabControlId('tab-panel-2');
+
+            // Assert
+            expect(received).toBe(-1);
+        });
     });
 
-    it('should #findChildByTabControlId return both TabPanel and TabControl instances when no matched found', () => {
-
-    });
-
-    it('should #findChildByIndex return child at specified index when specified index is valid', () => {
-
-    });
-
-    it('should #findChildByIndex return xxx when specified index is invalid', () => {
-
-    });
-
-    it('should #findChildIndexByTabControlId return index of matched child when child exist', () => {
-
-    });
-
-    it('should #findChildIndexByTabControlId return xxx of matched child when child exist', () => {
-
-    });
-
-    describe('Before add any children', () => {
+    describe('When tabItems have no children', () => {
         let tabItems;
 
         beforeAll(() => {
@@ -96,25 +175,32 @@ describe('Services: TabItems', () => {
         });
 
         it('should getter: noOfChildren return 0 when request counting total number of children', () => {
+            // Assert
             expect(tabItems.noOfChildren).toBe(0);
         });
 
         it('should getter: lastChildIndex return -1 when request last index of children', () => {
+            // Assert
             expect(tabItems.lastChildIndex).toBe(-1);
         });
 
         it('should callback function not called when no children when #forEach called', () => {
+            // Arrange
             const mockCallback = jest.fn();
 
+            // Act
             tabItems.forEach(mockCallback);
 
+            // Assert
             expect(mockCallback).not.toHaveBeenCalled();
         });
 
-        it('should #findChildByTabControlId return xxx when no children', () => {
-            const received = tabItems.findChildByTabControlId(0);
+        it('should #findChildByTabControlId called with 9999 return undefined when no children', () => {
+            // Act
+            const received = tabItems.findChildByTabControlId(9999);
 
-            expect(received).toBe('...');
+            // Assert
+            expect(received).toBeUndefined();
         });
     });
 });
