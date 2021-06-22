@@ -29,6 +29,12 @@ For full run:
   $ npm test
 ```
 
+For Cypress you'll need to make sure have `npm start` running before using the command below in your terminal:
+
+```shell
+  $ npm run cypress:open
+```
+
 ## Development
 
 You can start local development using the command below in your terminal and paste `http://localhost:1234` into your browser when it's ready.
@@ -71,7 +77,6 @@ TODO:
 - Installation Guide
 - Test Guide
 - Testing url hash and queries for activate tabs on page load with cypress
-- Testing accessibility using browser axe plugin for development
 - Look into automate accessibility audit (e.g. Jest / Cypress) at the end in case running out of time
 - JSDOM does not set focus on clicked item.
 
