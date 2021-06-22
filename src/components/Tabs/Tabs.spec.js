@@ -1,21 +1,30 @@
+// Component(s):
 import Tabs from '.';
+
+// Fixture(s):
 import { tabsHtmlFixture } from '~/fixtures/tabs-html-fixture';
+
+// Test Helper(s):
 import { getSelectedAttributesFromElements } from '~/test-helpers/elements';
 import { fireKeyUpEvent } from '~/test-helpers/events';
+import { createClassInstance } from '~/test-helpers/class';
 
 // Enum(s):
 import { KEY } from '~/src/enums/key-code';
 
 // Local Test Helper(s):
-const createTabsInstance = (...args) => () => new Tabs(args);
-
 const createTestTabsAndPanels = (numberOfTabs, numberOfPanels = 3) => {
     return [ ...new Array(numberOfTabs) ]
-        .map((_, index) => tabsHtmlFixture({
-            id: `tab-${index + 1}`,
-            heading: `Accessible Tab ${index + 1}`,
-            tabListLabel: index === 0 ? 'Only first with tablist label' : '',
-            panels: [ ...new Array(numberOfPanels) ].map( (panel, panelIndex) => ({ id: `panel-${index}-${panelIndex}`, dataTabTitle: `Tab title ${index}-${panelIndex}` }))
+        .map((_tab, tabIndex) => tabsHtmlFixture({
+            id: `tab-${tabIndex + 1}`,
+            heading: `Accessible Tab ${tabIndex + 1}`,
+            tabListLabel: tabIndex === 0 ? 'Only first with tablist label' : '',
+            panels: [ ...new Array(numberOfPanels) ]
+                .map((_panel, panelIndex) => ({
+                        id: `tab-${tabIndex}-panel-${panelIndex}`,
+                        dataTabTitle: `Tab ${tabIndex} - Panel ${panelIndex}`
+                    })
+                )
         }))
         .join('');
 }
@@ -92,11 +101,13 @@ const testKeyUpFiresByTabId = (totalItems, tabId) => ({
     keyCodesOrderToFire,
     expectedSelectedIndex
 }) => {
+    // Act
     const tabs = new Tabs(document.getElementById(tabId));
     keyCodesOrderToFire.forEach((keyCode) => {
         fireKeyUpEventViaSelectedControl(tabs, { keyCode });
     });
 
+    // Assert
     const {
         tabControlsAttributes,
         tabPanelsAttributes
@@ -123,29 +134,34 @@ describe('Component: Tabs', () => {
     });
 
     it('should throw error if "Tabs" created without valid "element" payload', () => {
-        expect(createTabsInstance()).toThrow('[Tabs] Invalid HTML Element (args[0])');
+        expect(createClassInstance(Tabs)).toThrow('[Tabs] Invalid HTML Element (args[0])');
     });
 
     it('should "tab-1" have class "tabs"', () => {
+        // Arrange
         const tab1El = document.getElementById('tab-1');
 
+        // Act
         new Tabs(tab1El);
 
+        // Assert
         expect(tab1El.className).toBe('tabs');
     });
 
     it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
+        // Arrange
         const tab1El = document.getElementById('tab-1');
         const tab2El = document.getElementById('tab-2');
 
+        // Act
         const tabs1 = new Tabs(tab1El);
         const tabs2 = new Tabs(tab2El);
 
+        // Assert
         const allPanelEls                        = [
             ...tabs1.element.getElementsByClassName('js-tab-panel'),
             ...tabs2.element.getElementsByClassName('js-tab-panel')
         ];
-
         const allPanelElsId                      = allPanelEls.map(({ id }) => id);
         const allControlsIdFromPanelAssociatedId = allPanelEls.map((panelEl) => panelEl.getAttribute('aria-labelledby'));
         const totalPanelsUniqueId                = new Set(allPanelElsId).size;
@@ -163,6 +179,7 @@ describe('Component: Tabs', () => {
     });
 
     it('should tablist element have "aria-label" when "data-tablist-label" is specified', () => {
+        // Arrange
         const getTablistAriaLabel = (tabs) =>
             tabs.element
                 .querySelector('.tab-list')
@@ -170,17 +187,21 @@ describe('Component: Tabs', () => {
         const tab1El = document.getElementById('tab-1');
         const tab2El = document.getElementById('tab-2');
 
+        // Act
         const tabs1 = new Tabs(tab1El);
         const tabs2 = new Tabs(tab2El);
 
+        // Assert
         expect(getTablistAriaLabel(tabs1)).toBe('Only first with tablist label');
         expect(getTablistAriaLabel(tabs2)).toBeNull();
     });
 
     it('should click on 3rd tab control button toggle selected state correctly', () => {
+        // Arrange
         const tab1El        = document.getElementById('tab-1');
         const indexToSelect = 2;
 
+        // Act
         const tabs1         = new Tabs(tab1El);
         const tabControlEls = tabs1.element.getElementsByClassName('tab-control');
         tabControlEls[indexToSelect].click();
@@ -196,6 +217,7 @@ describe('Component: Tabs', () => {
          * */
         tabControlEls[indexToSelect].focus();
 
+        // Assert
         const {
             tabControlsAttributes,
             tabPanelsAttributes
@@ -234,9 +256,11 @@ describe('Component: Tabs', () => {
     });
 
     it('should selected state render correctly when multiple group tabs selected', () => {
+        // Arrange
         const tabs1 = new Tabs(document.getElementById('tab-1'));
         const tabs2 = new Tabs(document.getElementById('tab-2'));
 
+        // Act
         [
             KEY.END,
             KEY.LEFT
@@ -249,6 +273,7 @@ describe('Component: Tabs', () => {
             fireKeyUpEventViaSelectedControl(tabs2, { keyCode });
         });
 
+        // Assert
         const expectedTab1Attributes           = getTestAttributesFromTabsInstance(tabs1);
         const expectedTab1SelectedTabControlId = tabs1.element.querySelectorAll('.tab-control')[1].id;
         const expectedTab2Attributes           = getTestAttributesFromTabsInstance(tabs2);
