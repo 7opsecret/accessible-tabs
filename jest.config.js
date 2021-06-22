@@ -3,5 +3,9 @@ module.exports = {
     moduleNameMapper: {
         '^~/(.*)$': '<rootDir>/$1',
         '\\.css$': '<rootDir>/__mocks__/styleMock.js'
-    }
+    },
+    modulePathIgnorePatterns: [
+        '<rootDir>/cypress/',
+        '<rootDir>/dist/'
+    ]
 }
