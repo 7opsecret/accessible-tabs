@@ -13,13 +13,11 @@ context('Accessible Tabs', () => {
             .tab()
             .tab()
             .should('have.class', 'tab-panel tab-panel--selected')
-            .and('contain.text', 'Tab 1-1 Lorem ipsum dolor sit amet,');
+            .and('contain.text', 'With horizontal orientation. You can navigate between the Tabs and Panels with Left Arrow / Right Arrow keyboard event');
     });
 
     it('should tab pass first active tab group\'s control next active element will be 1st active panel', () => {
         cy.focused()
             .tab({ shift: true})
-            
-            
     });
 });
