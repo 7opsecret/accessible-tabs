@@ -17,6 +17,7 @@
 .tab-list--vertical {
     flex: 0 0 120px;
     margin: -5px 0;
+    padding-right: 20px;
 }
 
 .tab-list--vertical .tab-control {

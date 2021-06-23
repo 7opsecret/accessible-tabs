@@ -13,3 +13,8 @@ new Tabs(
     document.getElementById('vertical-tabs-1'),
     { orientation: 'vertical' }
 );
+
+new Tabs(
+    document.querySelector('.no-id'),
+    { orientation: 'vertical' }
+);

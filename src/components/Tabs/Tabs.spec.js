@@ -16,7 +16,7 @@ import { KEY } from '~/src/enums/key-code';
 const createTestTabsAndPanels = (numberOfTabs, numberOfPanels = 3) => {
     return [ ...new Array(numberOfTabs) ]
         .map((_tab, tabIndex) => tabsHtmlFixture({
-            id: `tab-${tabIndex + 1}`,
+            id: `tabs-${tabIndex + 1}`,
             heading: `Accessible Tab ${tabIndex + 1}`,
             tabListLabel: tabIndex === 0 ? 'Only first with tablist label' : '',
             panels: [ ...new Array(numberOfPanels) ]
@@ -99,10 +99,11 @@ const createExpectedAttributesBySelectedIndex = (totalItems, selectedIndex) => {
 
 const testKeyUpFiresByTabId = (totalItems, tabId) => ({
     keyCodesOrderToFire,
-    expectedSelectedIndex
-}) => {
+    expectedSelectedIndex,
+    orientation = 'horizontal'
+} = {}) => {
     // Act
-    const tabs = new Tabs(document.getElementById(tabId));
+    const tabs = new Tabs(document.getElementById(tabId), { orientation });
     keyCodesOrderToFire.forEach((keyCode) => {
         fireKeyUpEventViaSelectedControl(tabs, { keyCode });
     });
@@ -126,7 +127,7 @@ const testKeyUpFiresByTabId = (totalItems, tabId) => ({
 
 describe('Component: Tabs', () => {
     const TOTAL_TEST_TAB_PANELS = 3;
-    const tab1KeyUpFiresTest = testKeyUpFiresByTabId(TOTAL_TEST_TAB_PANELS, 'tab-1');
+    const tab1KeyUpFiresTest = testKeyUpFiresByTabId(TOTAL_TEST_TAB_PANELS, 'tabs-1');
 
     beforeEach(() => {
         document.body.innerHTML = createTestTabsAndPanels(2, TOTAL_TEST_TAB_PANELS);
@@ -137,47 +138,47 @@ describe('Component: Tabs', () => {
         expect(createClassInstance(Tabs)).toThrow('[Tabs] Invalid HTML Element (args[0])');
     });
 
-    it('should "tab-1" have class "tabs tabs--horizontal"', () => {
+    it('should "tabs-1" have class "tabs tabs--horizontal"', () => {
         // Arrange
-        const tab1El = document.getElementById('tab-1');
+        const tabs1El = document.getElementById('tabs-1');
 
         // Act
-        new Tabs(tab1El);
+        new Tabs(tabs1El);
 
         // Assert
-        expect(tab1El.className).toBe('tabs tabs--horizontal');
+        expect(tabs1El.className).toBe('tabs tabs--horizontal');
     });
 
-    it('should "tab-1" have class "tabs tabs--vertical" when "vertical" orientation options is specified', () => {
+    it('should "tabs-1" have class "tabs tabs--vertical" when "vertical" orientation options is specified', () => {
         // Arrange
-        const tab1El = document.getElementById('tab-1');
+        const tabs1El = document.getElementById('tabs-1');
 
         // Act
-        new Tabs(tab1El, { orientation: 'VERTICAL' });
+        new Tabs(tabs1El, { orientation: 'VERTICAL' });
 
         // Assert
-        expect(tab1El.className).toBe('tabs tabs--vertical');
+        expect(tabs1El.className).toBe('tabs tabs--vertical');
     });
 
-    it('should "tab-1" have class default to "tabs tabs--horizontal" when orientation value was invalid', () => {
+    it('should "tabs-1" have class default to "tabs tabs--horizontal" when orientation value was invalid', () => {
         // Arrange
-        const tab1El = document.getElementById('tab-1');
+        const tabs1El = document.getElementById('tabs-1');
 
         // Act
-        new Tabs(tab1El, { orientation: 'vvertical' });
+        new Tabs(tabs1El, { orientation: 'vvertical' });
 
         // Assert
-        expect(tab1El.className).toBe('tabs tabs--horizontal');
+        expect(tabs1El.className).toBe('tabs tabs--horizontal');
     });
 
     it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
         // Arrange
-        const tab1El = document.getElementById('tab-1');
-        const tab2El = document.getElementById('tab-2');
+        const tabs1El = document.getElementById('tabs-1');
+        const tabs2El = document.getElementById('tabs-2');
 
         // Act
-        const tabs1 = new Tabs(tab1El);
-        const tabs2 = new Tabs(tab2El);
+        const tabs1 = new Tabs(tabs1El);
+        const tabs2 = new Tabs(tabs2El);
 
         // Assert
         const allPanelEls                        = [
@@ -206,12 +207,12 @@ describe('Component: Tabs', () => {
             tabs.element
                 .querySelector('.tab-list')
                 .getAttribute('aria-label');
-        const tab1El = document.getElementById('tab-1');
-        const tab2El = document.getElementById('tab-2');
+        const tabs1El = document.getElementById('tabs-1');
+        const tabs2El = document.getElementById('tabs-2');
 
         // Act
-        const tabs1 = new Tabs(tab1El);
-        const tabs2 = new Tabs(tab2El);
+        const tabs1 = new Tabs(tabs1El);
+        const tabs2 = new Tabs(tabs2El);
 
         // Assert
         expect(getTablistAriaLabel(tabs1)).toBe('Only first with tablist label');
@@ -220,11 +221,11 @@ describe('Component: Tabs', () => {
 
     it('should click on 3rd tab control button toggle selected state correctly', () => {
         // Arrange
-        const tab1El        = document.getElementById('tab-1');
+        const tabs1El        = document.getElementById('tabs-1');
         const indexToSelect = 2;
 
         // Act
-        const tabs1         = new Tabs(tab1El);
+        const tabs1         = new Tabs(tabs1El);
         const tabControlEls = tabs1.element.getElementsByClassName('tab-control');
         tabControlEls[indexToSelect].click();
         /**
@@ -248,20 +249,28 @@ describe('Component: Tabs', () => {
             expectedControlElsAttributes,
             expectedPanelElsAttributes
         } = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, indexToSelect);
-        const expectedQueryString = `?tab-1=${tabControlEls[indexToSelect].id}`;
+        const expectedQueryString = `?tabs-1=${tabControlEls[indexToSelect].id}`;
         expect(tabControlsAttributes).toEqual(expectedControlElsAttributes);
         expect(tabPanelsAttributes).toEqual(expectedPanelElsAttributes);
-        expect(window.location.hash).toBe('#tab-1');
+        expect(window.location.hash).toBe('#tabs-1');
         expect(window.location.search).toBe(expectedQueryString);
     });
 
     it.each`
-    keyNameToVerify | keyCodesOrderToFire        | expectedSelectedIndex
-    ${'Home'}       | ${[ KEY.RIGHT, KEY.HOME ]} | ${0}
-    ${'End'}        | ${[ KEY.END ]}             | ${2}
-    ${'Left'}       | ${[ KEY.END, KEY.LEFT ]}   | ${1}
-    ${'Right'}      | ${[ KEY.RIGHT ]}           | ${1}
-    `('should selected state render correctly when "$keyNameToVerify" key up event is fired when orientation is horizontal (default)', tab1KeyUpFiresTest);
+    orientation     | keyNameToVerify | keyCodesOrderToFire        | expectedSelectedIndex
+    ${'horizontal'} | ${'Home'}       | ${[ KEY.RIGHT, KEY.HOME ]} | ${0}
+    ${'horizontal'} | ${'End'}        | ${[ KEY.END ]}             | ${2}
+    ${'horizontal'} | ${'Left'}       | ${[ KEY.END, KEY.LEFT ]}   | ${1}
+    ${'horizontal'} | ${'Right'}      | ${[ KEY.RIGHT ]}           | ${1}
+    ${'horizontal'} | ${'Up'}         | ${[ KEY.LEFT, KEY.UP ]}    | ${2}
+    ${'horizontal'} | ${'Down'}       | ${[ KEY.RIGHT, KEY.DOWN ]} | ${1}
+    ${'vertical'}   | ${'Home'}       | ${[ KEY.DOWN, KEY.HOME ]}  | ${0}
+    ${'vertical'}   | ${'End'}        | ${[ KEY.END ]}             | ${2}
+    ${'vertical'}   | ${'Left'}       | ${[ KEY.END, KEY.LEFT ]}   | ${2}
+    ${'vertical'}   | ${'Right'}      | ${[ KEY.UP, KEY.RIGHT ]}   | ${2}
+    ${'vertical'}   | ${'Up'}         | ${[ KEY.UP, KEY.UP ]}      | ${1}
+    ${'vertical'}   | ${'Down'}       | ${[ KEY.DOWN, KEY.DOWN ]}  | ${2}
+    `('should selected state render correctly when "$keyNameToVerify" key up event is fired when orientation is $orientation', tab1KeyUpFiresTest);
 
     it('should selected state render correctly when first element was selected and "Left" key up event is fired', () => {
         tab1KeyUpFiresTest({
@@ -279,8 +288,8 @@ describe('Component: Tabs', () => {
 
     it('should selected state render correctly when multiple group tabs selected', () => {
         // Arrange
-        const tabs1 = new Tabs(document.getElementById('tab-1'));
-        const tabs2 = new Tabs(document.getElementById('tab-2'));
+        const tabs1 = new Tabs(document.getElementById('tabs-1'));
+        const tabs2 = new Tabs(document.getElementById('tabs-2'));
 
         // Act
         [
@@ -302,12 +311,12 @@ describe('Component: Tabs', () => {
         const expectedTab2SelectedTabControlId = tabs2.element.querySelectorAll('.tab-control')[2].id;
         const receivedTab1Attributes           = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, 1);
         const receveidTab2Attributes           = createExpectedAttributesBySelectedIndex(TOTAL_TEST_TAB_PANELS, 2);
-        const expectedQueryString              = `?tab-1=${expectedTab1SelectedTabControlId}&tab-2=${expectedTab2SelectedTabControlId}`;
+        const expectedQueryString              = `?tabs-1=${expectedTab1SelectedTabControlId}&tabs-2=${expectedTab2SelectedTabControlId}`;
         expect(receivedTab1Attributes.tabControlsAttributes).toEqual(expectedTab1Attributes.expectedControlElsAttributes);
         expect(receivedTab1Attributes.tabPanelsAttributes).toEqual(expectedTab1Attributes.expectedPanelElsAttributes);
         expect(receveidTab2Attributes.tabControlsAttributes).toEqual(expectedTab2Attributes.expectedControlElsAttributes);
         expect(receveidTab2Attributes.tabPanelsAttributes).toEqual(expectedTab2Attributes.expectedPanelElsAttributes);
-        expect(window.location.hash).toBe(`#tab-2`);
+        expect(window.location.hash).toBe(`#tabs-2`);
         expect(window.location.search).toBe(expectedQueryString);
     });
 });

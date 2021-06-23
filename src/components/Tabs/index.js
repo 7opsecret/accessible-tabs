@@ -33,7 +33,7 @@ export default class Tabs {
     ) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
         if (!element.id) {
-            console.warn('[Tabs] You don\'t have an unique "id", you will be missing the feature to keep your last active tab state')
+            console.warn('[Tabs] History feature will not work due to missing unique "id" on element')
         }
 
         this.element     = element;
@@ -42,9 +42,8 @@ export default class Tabs {
         this.orientation = AriaValidationService.isValidOrientation(orientation)
             ? orientation.toLowerCase()
             : ARIA_ORIENTATION.HORIZONTAL; // fallback to horizontal
-            // TODO: add test
         this.isVerticalOrientation = this.orientation === ARIA_ORIENTATION.VERTICAL;
-        this.shouldProcessHistory  = Boolean(this.element.id);
+        this.haveElementId = Boolean(this.element.id);
 
         this.mount();
     }
@@ -61,7 +60,7 @@ export default class Tabs {
         this.setDefaultCssClasses();
         this.setupPanelsAndControls();
 
-        if (this.shouldProcessHistory) {
+        if (this.haveElementId) {
             const firstTabItem = this.tabItems.findChildByIndex(0);
             ActivatedTabsHistoryService.mount({
                 tabsId: this.element.id,
@@ -71,24 +70,23 @@ export default class Tabs {
                     associateId: firstTabItem.tabPanel.id
                 }
             });
+
+            this.loadSearchParamState();
         }
-        this.setSelectFromSearchParam();
     }
 
-    setSelectFromSearchParam() {
-        var params = new URLSearchParams(window.location.search)
-
-        let temp = []
-
-        for (let p of params) {
-            temp.push(p)
+    loadSearchParamState() {
+        const params = new URLSearchParams(window.location.search);
+        let temp = [];
+        for (let param of params) {
+            temp.push(param);
         }
         const entries = new Map(temp);
         const tabsFromSearchParam = Object.fromEntries(entries);
-        const potentialControlId = tabsFromSearchParam[this.element.id];
-        const tabControlInstance = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
+        const potentialControlId  = tabsFromSearchParam[this.element.id];
+        const tabControlInstance  = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
         if (tabControlInstance) {
-            this.selectNextTabByControl(tabControlInstance)
+            this.selectNextTabByControl(tabControlInstance);
         }
     }
 
@@ -142,7 +140,7 @@ export default class Tabs {
         const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id).tabControl;
         this.selectNextTabByControl(selectedTabControl);
 
-        if (!this.shouldProcessHistory) {
+        if (!this.haveElementId) {
             return;
         }
 
