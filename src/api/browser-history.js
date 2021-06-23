@@ -5,7 +5,7 @@ import { PubSubServices } from '../services/pub-sub';
 import { isFunction } from '~/src/utils/assert';
 
 // Local Config(s):
-const POPSTATE_SUBSCRIPTION_EVENT_NAME = 'popstate';
+const POPSTATE_EVENT_NAME = 'popstate';
 
 export const BrowserHistoryApi = (() => {
     const getState = () => history.state;
@@ -17,16 +17,16 @@ export const BrowserHistoryApi = (() => {
             return;
         }
 
-        PubSubServices.subscribe(POPSTATE_SUBSCRIPTION_EVENT_NAME, callback);
+        PubSubServices.subscribe(POPSTATE_EVENT_NAME, callback);
     };
 
     const _popStateCallback = (event) => {
-        PubSubServices.publish(POPSTATE_SUBSCRIPTION_EVENT_NAME, event);
+        PubSubServices.publish(POPSTATE_EVENT_NAME, event);
     }
 
     const _init = () => {
         window.addEventListener(
-            'popstate',
+            POPSTATE_EVENT_NAME,
             _popStateCallback
         );
     }
