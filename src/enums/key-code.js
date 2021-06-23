@@ -9,5 +9,7 @@ export const KEY = {
 
 export const DIRECTION = {
     [ KEY.LEFT ]: -1,
-    [ KEY.RIGHT ]: 1
+    [ KEY.RIGHT ]: 1,
+    [ KEY.UP ]: -1,
+    [ KEY.DOWN ]: 1
 }

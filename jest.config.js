@@ -7,5 +7,16 @@ module.exports = {
     modulePathIgnorePatterns: [
         '<rootDir>/cypress/',
         '<rootDir>/dist/'
+    ],
+    collectCoverage: true,
+    collectCoverageFrom: [
+        'src/**/*.js'
+    ],
+    coverageReporters: [
+        'html',
+        'text-summary'
+    ],
+    coveragePathIgnorePatterns: [
+        '/enums/'
     ]
 }

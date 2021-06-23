@@ -19,6 +19,7 @@ export default class TabControl {
             title,
             onClick,
             onKeyUp,
+            onKeyDown,
             onFocus
         } = {}
     ) {
@@ -32,8 +33,8 @@ export default class TabControl {
         this.title       = title;
         this.onClick     = onClick;
         this.onKeyUp     = onKeyUp;
+        this.onKeyDown   = onKeyDown;
         this.onFocus     = onFocus;
-        // 5. keypress callback attach to element
 
         this.mount();
     }
@@ -98,6 +99,10 @@ export default class TabControl {
             {
                 eventName: 'keyup',
                 handler: this.onKeyUp
+            },
+            {
+                eventName: 'keydown',
+                handler: this.onKeyDown
             },
             {
                 eventName: 'focus',

@@ -137,7 +137,7 @@ describe('Component: Tabs', () => {
         expect(createClassInstance(Tabs)).toThrow('[Tabs] Invalid HTML Element (args[0])');
     });
 
-    it('should "tab-1" have class "tabs"', () => {
+    it('should "tab-1" have class "tabs tabs--horizontal"', () => {
         // Arrange
         const tab1El = document.getElementById('tab-1');
 
@@ -145,7 +145,29 @@ describe('Component: Tabs', () => {
         new Tabs(tab1El);
 
         // Assert
-        expect(tab1El.className).toBe('tabs');
+        expect(tab1El.className).toBe('tabs tabs--horizontal');
+    });
+
+    it('should "tab-1" have class "tabs tabs--vertical" when "vertical" orientation options is specified', () => {
+        // Arrange
+        const tab1El = document.getElementById('tab-1');
+
+        // Act
+        new Tabs(tab1El, { orientation: 'VERTICAL' });
+
+        // Assert
+        expect(tab1El.className).toBe('tabs tabs--vertical');
+    });
+
+    it('should "tab-1" have class default to "tabs tabs--horizontal" when orientation value was invalid', () => {
+        // Arrange
+        const tab1El = document.getElementById('tab-1');
+
+        // Act
+        new Tabs(tab1El, { orientation: 'vvertical' });
+
+        // Assert
+        expect(tab1El.className).toBe('tabs tabs--horizontal');
     });
 
     it('should multiple Tabs instances all have no duplicate id and associated correctly', () => {
@@ -239,7 +261,7 @@ describe('Component: Tabs', () => {
     ${'End'}        | ${[ KEY.END ]}             | ${2}
     ${'Left'}       | ${[ KEY.END, KEY.LEFT ]}   | ${1}
     ${'Right'}      | ${[ KEY.RIGHT ]}           | ${1}
-    `('should selected state render correctly when "$keyNameToVerify" key up event is fired', tab1KeyUpFiresTest);
+    `('should selected state render correctly when "$keyNameToVerify" key up event is fired when orientation is horizontal (default)', tab1KeyUpFiresTest);
 
     it('should selected state render correctly when first element was selected and "Left" key up event is fired', () => {
         tab1KeyUpFiresTest({

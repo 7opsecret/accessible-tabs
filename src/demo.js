@@ -8,3 +8,8 @@ new Tabs(
 new Tabs(
     document.getElementById('tabs-2')
 );
+
+new Tabs(
+    document.getElementById('vertical-tabs-1'),
+    { orientation: 'vertical' }
+);

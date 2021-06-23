@@ -1,6 +1,10 @@
-.tab-list {
-    border-radius: 4px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
-    display: inline-block;
-    overflow: hidden;
+
+:root {
+    --primary-color: blueviolet;
+    --light-grey: #ececec;
+}
+
+.tabs--vertical {
+    display: flex;
+    flex-direction: row;
 }

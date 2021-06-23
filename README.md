@@ -1,6 +1,6 @@
-# accessible-tabs
+# Accessible Tabs
 
-# Prerequisite
+## Prerequisite
 
 - Node v14.17.1
 - NPM 6.14.13
@@ -53,6 +53,7 @@ HTML:
 - data-tab-title for tab title
 - make sure all ID are unique
 - container "data-tablist-label" for to describe purpose of tabs
+- orientation options
 
 ```html
 <div id="tabs-1" data-tablist-label="">
@@ -74,56 +75,5 @@ JavaScript:
 
 
 TODO:
-- Installation Guide
-- Test Guide
 - Testing url hash and queries for activate tabs on page load with cypress
-- Look into automate accessibility audit (e.g. Jest / Cypress) at the end in case running out of time
 - JSDOM does not set focus on clicked item.
-
-
-Data Structure / Types:
-PayloadForActivationCallback = { selectedTabControlId, selectedTabPanelId }
-
-StateToPush = {
-  tabs: {
-    ...history.state.tabs
-    [tabId]: PayloadForActivationCallback
-  }
-}
-
-API: BrowserHistory
-- addEventListeners (store list of listeners {tabId, PubSubService.publish}[])
-- pushState
-- getState
-
-API: Location
-- get searchParam
-- set searchParam
-- hash handler
-
-Service: pubsub
-- subscribe(tabId, callback)
-- publish(tabId, PayloadForActivationCallback)
-
--------------------------------------------------------
-
-Setup:
-- TabsInstance on creation (do once):
-  1. (PubSubService) #subscribe( tabId, TabsInstance.activateSelectedTabCallback )
-  2. (BrowserHistoryAPI) #addEventlistener to (PubSubService) #publish(tabId, PayloadForActivationCallback)
-  3. (LocationAPI)
-    - get searchParam, filter by tabId, call TabsInstance.activateSelectedTabCallback
-    - scroll to hash if found
-
-Action:
-- When tab set Focus:
-  1. (BrowserHistoryAPI) #pushState() with payload that TabsInstance.activateSelectedTabCallback expected
-    - StateToPush:
-      * state to push combine with other tabs details from window.history (BrowserHistory.getState) to enable multiple tabs selected
-      * state to push must meet PayloadForActivationCallback type
-      * StateToPush
-    - ''
-    - url (use with LocationAPI):
-      * Not overwrite other searchParam
-      * update location hash
-      * set searchParam with StateToPush to queryString (with hash)

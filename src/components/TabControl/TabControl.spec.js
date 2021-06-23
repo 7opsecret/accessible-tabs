@@ -1,4 +1,4 @@
-import { fireKeyUpEvent } from '~/test-helpers/events';
+import { fireKeyUpEvent, fireKeyDownEvent } from '~/test-helpers/events';
 import TabControl from '.';
 
 describe('Component: TabControl', () => {
@@ -77,6 +77,23 @@ describe('Component: TabControl', () => {
 
         // Assert
         expect(mockOnKeyUp).toHaveBeenCalledTimes(1);
+    });
+
+    it('should onKeyDown handler binded and fired when any key down', () => {
+        // Arrange
+        const mockOnKeyDown = jest.fn();
+        const tabControl = new TabControl(
+            controlEl,
+            {
+                onKeyDown: mockOnKeyDown
+            }
+        );
+
+        // Act
+        fireKeyDownEvent(tabControl.element);
+
+        // Assert
+        expect(mockOnKeyDown).toHaveBeenCalledTimes(1);
     });
 
     it('should onFocus handler binded and fired when focus is set', () => {
