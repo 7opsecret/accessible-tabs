@@ -1,38 +1,38 @@
-context('Given page visited with url contain activated tabs in query string', () => {
+describe('Given page visited with url contain activated tabs in query string', () => {
     before(() => {
-        cy.visit('/?vertical-tabs-1=tab-control-vt-3&tabs-1=tab-control-2&tabs-2=tab-control-5#tabs-2');
+        cy.visit('/?vertical-tabs-1=tab-control-vertical-tabs-1-item-3&horizontal-tabs-1=tab-control-horizontal-tabs-1-item-2&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2#horizontal-tabs-2');
     });
 
     it('should first horizontal tab group activate correctly on page loaded', () => {
-        cy.get('#tabs-1 .tab-control')
+        cy.get('#horizontal-tabs-1 .tab-control')
             .eq(1)
             .should('have.class', 'tab-control--selected')
             .and('have.attr', 'aria-selected', 'true')
             .and('have.attr', 'tabindex', '0');
 
-        cy.get('#tabs-1 .tab-panel')
+        cy.get('#horizontal-tabs-1 .tab-panel')
             .eq(1)
             .should('have.class', 'tab-panel--selected')
             .not('have.attr', 'hidden');
 
-        cy.get('#tabs-1 .tab-list')
+        cy.get('#horizontal-tabs-1 .tab-list')
             .should('have.class', 'tab-list--horizontal')
             .and('have.attr', 'aria-orientation', 'horizontal');
     });
 
     it('should second horizontal tab group activate correctly on page loaded', () => {
-        cy.get('#tabs-2 .tab-control')
+        cy.get('#horizontal-tabs-2 .tab-control')
             .eq(1)
             .should('have.class', 'tab-control--selected')
             .and('have.attr', 'aria-selected', 'true')
             .and('have.attr', 'tabindex', '0');
 
-        cy.get('#tabs-2 .tab-panel')
+        cy.get('#horizontal-tabs-2 .tab-panel')
             .eq(1)
             .should('have.class', 'tab-panel--selected')
             .not('have.attr', 'hidden');
 
-        cy.get('#tabs-2 .tab-list')
+        cy.get('#horizontal-tabs-2 .tab-list')
             .should('have.class', 'tab-list--horizontal')
             .and('have.attr', 'aria-orientation', 'horizontal');
     });
