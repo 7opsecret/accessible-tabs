@@ -73,7 +73,5 @@ JavaScript:
 
 `new Tabs(document.getElementById('tab-id'))`
 
-
 TODO:
-- Testing url hash and queries for activate tabs on page load with cypress
 - JSDOM does not set focus on clicked item.

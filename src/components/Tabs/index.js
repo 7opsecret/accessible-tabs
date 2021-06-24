@@ -121,7 +121,7 @@ export default class Tabs {
                 title: tabTitle
             };
 
-            const tabControl = new TabControl(document.createElement('a'), tabControlOptions);
+            const tabControl = new TabControl(document.createElement('div'), tabControlOptions);
             const tabPanel   = new TabPanel(panelEl, tabPanelOptions);
             this.tabItems.addChild({ tabControl, tabPanel });
             tabControlsFragment.appendChild(tabControl.element);
