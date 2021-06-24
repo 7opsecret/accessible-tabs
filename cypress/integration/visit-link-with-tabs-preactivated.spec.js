@@ -1,4 +1,4 @@
-context('When page visited with url contain activated tabs in query string', () => {
+context('Given page visited with url contain activated tabs in query string', () => {
     before(() => {
         cy.visit('/?vertical-tabs-1=tab-control-vt-3&tabs-1=tab-control-2&tabs-2=tab-control-5#tabs-2');
     });
