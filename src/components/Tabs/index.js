@@ -22,7 +22,7 @@ import { uid } from '~/src/utils/uid';
 
 // Config(s):
 const TABS_BASE_CLASSNAME = 'tabs';
-const PANEL_CSS_SELECTOR  = 'js-tab-panel';
+export const PANEL_CSS_SELECTOR = 'js-tab-panel';
 
 export default class Tabs {
     constructor(
@@ -32,23 +32,26 @@ export default class Tabs {
         } = {}
     ) {
         assertHtmlElement(element, '[Tabs] Invalid HTML Element (args[0])');
-        if (!element.id) {
-            console.warn('[Tabs] History feature will not work due to missing unique "id" on element')
-        }
+        const panelEls = element.getElementsByClassName(PANEL_CSS_SELECTOR);
+        if (!panelEls.length) return; // Silently bailed if no panels found
 
         this.element     = element;
+        this.tabsId      = element.id || `tabs-${uid()}`;
         this.tabItems    = null;
         this.tabList     = null;
+        this.panelEls    = panelEls;
         this.orientation = AriaValidationService.isValidOrientation(orientation)
             ? orientation.toLowerCase()
             : ARIA_ORIENTATION.HORIZONTAL; // fallback to horizontal
         this.isVerticalOrientation = this.orientation === ARIA_ORIENTATION.VERTICAL;
-        this.haveElementId = Boolean(this.element.id);
 
         this.mount();
     }
 
     mount() {
+        if(!this.element.id) {
+            this.element.id = this.tabsId;
+        }
         this.tabItems = new TabItems();
         this.tabList  = new TabList(
             document.createElement('div'),
@@ -60,19 +63,17 @@ export default class Tabs {
         this.setDefaultCssClasses();
         this.setupPanelsAndControls();
 
-        if (this.haveElementId) {
-            const firstTabItem = this.tabItems.findChildByIndex(0);
-            ActivatedTabsHistoryService.mount({
-                tabsId: this.element.id,
-                uiUpdaterCallback: this.selectNextTabByControl.bind(this),
-                popStateFallbackState: {
-                    id: firstTabItem.tabControl.id,
-                    associateId: firstTabItem.tabPanel.id
-                }
-            });
+        const firstTabItem = this.tabItems.findChildByIndex(0);
+        ActivatedTabsHistoryService.mount({
+            tabsId: this.tabsId,
+            uiUpdaterCallback: this.selectNextTabByControl.bind(this),
+            popStateFallbackState: {
+                id: firstTabItem.tabControl.id,
+                associateId: firstTabItem.tabPanel.id
+            }
+        });
 
-            this.loadSearchParamState();
-        }
+        this.loadSearchParamState();
     }
 
     loadSearchParamState() {
@@ -83,7 +84,7 @@ export default class Tabs {
         }
         const entries = new Map(temp);
         const tabsFromSearchParam = Object.fromEntries(entries);
-        const potentialControlId  = tabsFromSearchParam[this.element.id];
+        const potentialControlId  = tabsFromSearchParam[this.tabsId];
         const tabControlInstance  = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
         if (tabControlInstance) {
             this.selectNextTabByControl(tabControlInstance);
@@ -96,10 +97,8 @@ export default class Tabs {
 
     setupPanelsAndControls() {
         const tabControlsFragment = new DocumentFragment();
-        const panelEls            = this.element.getElementsByClassName(PANEL_CSS_SELECTOR);
-        if (!panelEls.length) return;
 
-        [ ...panelEls ].forEach((panelEl, index) => {
+        [ ...this.panelEls ].forEach((panelEl, index) => {
             const id              = panelEl.id || uid();
             const defaultSelected = index === 0
             const tabControlId    = `${TAB_CONTROL_BASE_CLASSNAME}-${id}`;
@@ -140,12 +139,8 @@ export default class Tabs {
         const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id).tabControl;
         this.selectNextTabByControl(selectedTabControl);
 
-        if (!this.haveElementId) {
-            return;
-        }
-
         ActivatedTabsHistoryService.save({
-            tabsId: this.element.id,
+            tabsId: this.tabsId,
             selectedTabState: {
                 id: selectedTabControl.id,
                 associateId: selectedTabControl.associateId

@@ -135,7 +135,25 @@ describe('Component: Tabs', () => {
     });
 
     it('should throw error if "Tabs" created without valid "element" payload', () => {
+        // Assert
         expect(createClassInstance(Tabs)).toThrow('[Tabs] Invalid HTML Element (args[0])');
+    });
+
+    it('should not throw error if creating instance with valid element but without any panels', () => {
+        // Assert
+        expect(createClassInstance(Tabs, document.createElement('div'))).not.toThrow();
+    });
+
+    it('should automatically assign an id to element when create instance with valid element without id that have at least one panel', () => {
+        // Arrange
+        const elementWithoutId = document.createElement('div');
+        elementWithoutId.innerHTML = '<div class="js-tab-panel">panel sample</div>';
+
+        // Act
+        const noIdTabsInstance = new Tabs(elementWithoutId);
+
+        // Assert
+        expect(elementWithoutId.id.startsWith('tabs-')).toBeTruthy();
     });
 
     it('should "tabs-1" have class "tabs tabs--horizontal"', () => {
