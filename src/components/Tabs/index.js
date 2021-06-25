@@ -88,6 +88,18 @@ export default class Tabs {
         const tabControlInstance  = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
         if (tabControlInstance) {
             this.selectNextTabByControl(tabControlInstance);
+
+            history.replaceState({
+                ...history.state,
+                tabs: {
+                    ...history.state?.tabs ?? {},
+                    [this.tabsId]: {
+                        id: tabControlInstance.id,
+                        associateId: tabControlInstance.associateId
+                    }
+                }
+            },
+            '')
         }
     }
 
