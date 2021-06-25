@@ -6,6 +6,7 @@ import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 // Util(s):
 import { setAttributes } from '~/src/utils/dom';
 
+// Local Config(s):
 export const TAB_PANEL_BASE_CLASSNAME = 'tab-panel';
 const TAB_PANEL_SELECTED_CLASSNAME = `${TAB_PANEL_BASE_CLASSNAME}--selected`;
 

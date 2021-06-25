@@ -1,23 +1,23 @@
 // Service(s):
-import { TabItems } from './tab-items';
+import { TabItemsService } from './tab-items';
 
 // Fixture(s):
 import { tabControlsAndPanelsFixtures } from '~/fixtures/tab-controls-and-panels-fixture';
 
-const addChildrenToTabItemsInstance = (children) => (tabItemsInstance) =>
+const addChildrenToTabItemsServiceInstance = (children) => (tabItemsInstance) =>
     children.forEach((child) => tabItemsInstance.addChild(child));
 
-describe('Services: TabItems', () => {
-    const add3ChildrenToTabItemsInstance = addChildrenToTabItemsInstance(
+describe('Services: TabItemsService', () => {
+    const add3ChildrenToTabItemsServiceInstance = addChildrenToTabItemsServiceInstance(
         tabControlsAndPanelsFixtures(3)
     );
 
     it('should getter: lastChildIndex return 2 when have 3 children', () => {
         // Arrange
-        const tabItems = new TabItems();
+        const tabItems = new TabItemsService();
 
         // Act
-        add3ChildrenToTabItemsInstance(tabItems);
+        add3ChildrenToTabItemsServiceInstance(tabItems);
 
         // Assert
         expect(tabItems.lastChildIndex).toBe(2);
@@ -25,10 +25,10 @@ describe('Services: TabItems', () => {
 
     it('should #forEach throw error when called without any payload', () => {
         // Arrange
-        const tabItems = new TabItems();
+        const tabItems = new TabItemsService();
 
         // Assert
-        expect(() => tabItems.forEach()).toThrow('[TabItems] Invalid callback function');
+        expect(() => tabItems.forEach()).toThrow('[TabItemsService] Invalid callback function');
     });
 
     it.each`
@@ -42,15 +42,15 @@ describe('Services: TabItems', () => {
         arg
     }) => {
         // Arrange
-        const tabItems = new TabItems();
+        const tabItems = new TabItemsService();
 
         // Assert
-        expect(() => tabItems.forEach(arg)).toThrow('[TabItems] Invalid callback function');
+        expect(() => tabItems.forEach(arg)).toThrow('[TabItemsService] Invalid callback function');
     });
 
     it('should #addChild add both TabPanel and TabControl instances as children as 1 object', () => {
         // Arrange
-        const tabItems  = new TabItems();
+        const tabItems  = new TabItemsService();
         const mockChild = tabControlsAndPanelsFixtures(1)[0];
 
         // Act
@@ -62,31 +62,31 @@ describe('Services: TabItems', () => {
 
     it('should #addChild throw error when trying to add invalid data type', () => {
         // Arrange
-        const tabItems = new TabItems();
+        const tabItems = new TabItemsService();
 
         // Assert
         expect(() => tabItems.addChild({}))
-            .toThrow('[TabItems] tabControl needs to be instance of TabControl');
+            .toThrow('[TabItemsService] tabControl needs to be instance of TabControl');
     });
 
     it('should #addChild throw error when trying to add invalid tabPanel', () => {
         // Arrange
-        const tabItems             = new TabItems();
+        const tabItems             = new TabItemsService();
         const MockBadClass         = class {};
         const mockBadClassInstance = new MockBadClass();
         const { tabControl }       = tabControlsAndPanelsFixtures(1)[0];
 
         // Assert
         expect(() => tabItems.addChild({ tabControl, tabPanel: mockBadClassInstance }))
-            .toThrow('[TabItems] tabPanel needs to be instance of TabPanel');
+            .toThrow('[TabItemsService] tabPanel needs to be instance of TabPanel');
     });
 
     describe('When tabItems instance have 3 children', () => {
         let tabItems;
 
         beforeAll(() => {
-            tabItems = new TabItems();
-            add3ChildrenToTabItemsInstance(tabItems);
+            tabItems = new TabItemsService();
+            add3ChildrenToTabItemsServiceInstance(tabItems);
         });
 
         it('should #forEach callback function called 3 times with 3 children', () => {
@@ -171,12 +171,7 @@ describe('Services: TabItems', () => {
         let tabItems;
 
         beforeAll(() => {
-            tabItems = new TabItems();
-        });
-
-        it('should getter: noOfChildren return 0 when request counting total number of children', () => {
-            // Assert
-            expect(tabItems.noOfChildren).toBe(0);
+            tabItems = new TabItemsService();
         });
 
         it('should getter: lastChildIndex return -1 when request last index of children', () => {

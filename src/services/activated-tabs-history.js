@@ -1,15 +1,15 @@
-import { BrowserHistoryApi } from '~/src/api/browser-history';
-import { PubSubServices } from './pub-sub';
+import { HistoryApi } from '~/src/api/history';
+import { PubSubService } from './pub-sub';
 
 export const ActivatedTabsHistoryService = (() => {
     // Private
-    const _updateTabsHistoryState = (tabsId, selectedTabState) => {
-        const prevState = BrowserHistoryApi.getState() || {};
+    const _mergeTabsState = (newTabsState) => {
+        const prevState = HistoryApi.getState() || {};
         const nextState = {
             ...prevState,
             tabs: {
                 ...prevState.tabs || {},
-                [tabsId]: selectedTabState
+                ...newTabsState
             }
         };
 
@@ -25,7 +25,7 @@ export const ActivatedTabsHistoryService = (() => {
         const url = new URL(window.location);
         Object.entries(tabsState)
             .forEach(([k, v]) => url.searchParams.set(k, v.id));
-        url.hash = tabsId // to section instead of tab
+        url.hash = tabsId // scroll to section instead of tab
 
         return url;
     }
@@ -38,11 +38,11 @@ export const ActivatedTabsHistoryService = (() => {
     } = {}) => {
         const popStateCallback = (e) => {
             let { id, associateId } = e.state?.tabs?.[tabsId] ?? popStateFallbackState ?? {};
-            PubSubServices.publish(tabsId, { id, associateId });
+            PubSubService.publish(tabsId, { id, associateId });
         };
 
-        PubSubServices.subscribe(tabsId, uiUpdaterCallback);
-        BrowserHistoryApi.addEventListener(popStateCallback);
+        PubSubService.subscribe(tabsId, uiUpdaterCallback);
+        HistoryApi.addEventListener(popStateCallback);
     }
 
     const save = ({
@@ -52,14 +52,27 @@ export const ActivatedTabsHistoryService = (() => {
         if(!tabsId) {
             throw new Error('[ActivatedTabsHistoryService]: Save failure due to invalid tabsId')
         }
-        const nextState = _updateTabsHistoryState(tabsId, selectedTabState);
+        const newTabsState  = {
+            [tabsId]: {
+                id: selectedTabState.id,
+                associateId: selectedTabState.associateId
+            }
+        }
+        const nextState = _mergeTabsState(newTabsState);
         const nextUrl   = _createUrlWithAllSelectedTabs(nextState.tabs, tabsId);
 
-        BrowserHistoryApi.pushState(nextState, '', nextUrl);
+        HistoryApi.pushState(nextState, '', nextUrl);
+    }
+
+    const replaceState = (newTabsState) => {
+        const nextState = _mergeTabsState(newTabsState);
+
+        HistoryApi.replaceState(nextState, '');
     }
 
     return {
         mount,
-        save
+        save,
+        replaceState
     }
 })();

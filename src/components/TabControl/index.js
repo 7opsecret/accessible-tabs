@@ -7,8 +7,10 @@ import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
 import { setAttributes } from '~/src/utils/dom';
 import { isFunction } from '~/src/utils/assert';
 
+// Local Config(s):
 export const TAB_CONTROL_BASE_CLASSNAME = 'tab-control';
 const TAB_CONTROL_SELECTED_CLASSNAME = `${TAB_CONTROL_BASE_CLASSNAME}--selected`;
+
 export default class TabControl {
     constructor(
         element,

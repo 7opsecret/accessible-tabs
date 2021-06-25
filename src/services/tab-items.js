@@ -5,13 +5,9 @@ import TabPanel from '~/src/components/TabPanel';
 // Util(s):
 import { isFunction } from '~/src/utils/assert';
 
-export class TabItems {
+export class TabItemsService {
     constructor() {
         this.children = [];
-    }
-
-    get noOfChildren() {
-        return this.children.length;
     }
 
     get lastChildIndex() {
@@ -20,7 +16,7 @@ export class TabItems {
 
     forEach(cb) {
         if(!isFunction(cb)) {
-            throw new Error('[TabItems] Invalid callback function');
+            throw new Error('[TabItemsService] Invalid callback function');
         }
         if (!this.children.length) {
             return;
@@ -33,11 +29,11 @@ export class TabItems {
         tabPanel
     } = {}) {
         if (!(tabControl instanceof TabControl)) {
-            throw new Error('[TabItems] tabControl needs to be instance of TabControl');
+            throw new Error('[TabItemsService] tabControl needs to be instance of TabControl');
         }
 
         if (!(tabPanel instanceof TabPanel)) {
-            throw new Error('[TabItems] tabPanel needs to be instance of TabPanel');
+            throw new Error('[TabItemsService] tabPanel needs to be instance of TabPanel');
         }
 
         this.children = [

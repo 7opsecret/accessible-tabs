@@ -3,7 +3,7 @@ import './styles.css';
 // Service(s):
 import { ActivatedTabsHistoryService } from '~/src/services/activated-tabs-history';
 import { AriaValidationService } from '~/src/services/aria-validation';
-import { TabItems } from '~/src/services/tab-items';
+import { TabItemsService } from '~/src/services/tab-items';
 
 // Exception(s) Handling:
 import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
@@ -20,7 +20,7 @@ import { KEY, DIRECTION } from '~/src/enums/key-code';
 // Util(s):
 import { uid } from '~/src/utils/uid';
 
-// Config(s):
+// Local Config(s):
 const TABS_BASE_CLASSNAME = 'tabs';
 export const PANEL_CSS_SELECTOR = 'js-tab-panel';
 
@@ -52,7 +52,7 @@ export default class Tabs {
         if(!this.element.id) {
             this.element.id = this.tabsId;
         }
-        this.tabItems = new TabItems();
+        this.tabItems = new TabItemsService();
         this.tabList  = new TabList(
             document.createElement('div'),
             {
@@ -62,7 +62,11 @@ export default class Tabs {
         );
         this.setDefaultCssClasses();
         this.setupPanelsAndControls();
+        this.subscribeHistoryService();
+        this.syncStateFromSearchParams();
+    }
 
+    subscribeHistoryService() {
         const firstTabItem = this.tabItems.findChildByIndex(0);
         ActivatedTabsHistoryService.mount({
             tabsId: this.tabsId,
@@ -72,34 +76,19 @@ export default class Tabs {
                 associateId: firstTabItem.tabPanel.id
             }
         });
-
-        this.loadSearchParamState();
     }
 
-    loadSearchParamState() {
-        const params = new URLSearchParams(window.location.search);
-        let temp = [];
-        for (let param of params) {
-            temp.push(param);
-        }
-        const entries = new Map(temp);
-        const tabsFromSearchParam = Object.fromEntries(entries);
-        const potentialControlId  = tabsFromSearchParam[this.tabsId];
-        const tabControlInstance  = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
+    syncStateFromSearchParams() {
+        const potentialControlId = new URLSearchParams(window.location.search).get(this.tabsId);
+        const tabControlInstance = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
         if (tabControlInstance) {
             this.selectNextTabByControl(tabControlInstance);
-
-            history.replaceState({
-                ...history.state,
-                tabs: {
-                    ...history.state?.tabs ?? {},
-                    [this.tabsId]: {
-                        id: tabControlInstance.id,
-                        associateId: tabControlInstance.associateId
-                    }
+            ActivatedTabsHistoryService.replaceState({
+                [this.tabsId]: {
+                    id: tabControlInstance.id,
+                    associateId: tabControlInstance.associateId
                 }
-            },
-            '')
+            });
         }
     }
 
@@ -148,7 +137,7 @@ export default class Tabs {
     }
 
     handleTabControlFocus = (e) => {
-        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id).tabControl;
+        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
         this.selectNextTabByControl(selectedTabControl);
 
         ActivatedTabsHistoryService.save({

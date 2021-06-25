@@ -1,48 +1,49 @@
-jest.mock('~/src/api/browser-history', () => ({
-    BrowserHistoryApi: {
+jest.mock('~/src/api/history', () => ({
+    HistoryApi: {
         addEventListener: jest.fn(),
+        getState: jest.fn(),
         pushState: jest.fn(),
-        getState: jest.fn()
+        replaceState: jest.fn()
     }
 }));
 
 jest.mock('./pub-sub', () => ({
-    PubSubServices: {
+    PubSubService: {
         subscribe: jest.fn()
     }
 }));
 
-import { BrowserHistoryApi } from '~/src/api/browser-history';
-import { PubSubServices } from './pub-sub';
+import { HistoryApi } from '~/src/api/history';
+import { PubSubService } from './pub-sub';
 import { ActivatedTabsHistoryService } from './activated-tabs-history';
 
 describe('Service: ActivatedTabsHistoryService', () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
-    describe('When #mount is called', () => {
-        it('should BrowserHistoryApi.addEventListener and PubSubServices.subscribe has been called with expected payload', () => {
+    describe('Given #mount is called', () => {
+        it('should HistoryApi.addEventListener and PubSubService.subscribe has been called with expected payload', () => {
             // Arrange
             const mockUiUpdaterCallback = jest.fn();
-            const mockMountPayload = {
+            const mockMountPayload      = {
                 tabsId: 'mock-tabs-id',
                 uiUpdaterCallback: mockUiUpdaterCallback,
                 popStateFallbackState: {}
-            }
+            };
 
             // Act
             ActivatedTabsHistoryService.mount(mockMountPayload);
 
             // Assert
-            expect(PubSubServices.subscribe).toHaveBeenNthCalledWith(1, 'mock-tabs-id', mockUiUpdaterCallback);
-            expect(BrowserHistoryApi.addEventListener).toHaveBeenCalledTimes(1);
+            expect(PubSubService.subscribe).toHaveBeenNthCalledWith(1, 'mock-tabs-id', mockUiUpdaterCallback);
+            expect(HistoryApi.addEventListener).toHaveBeenCalledTimes(1);
         });
     });
 
-    describe('When #save is called', () => {
+    describe('Given #save is called', () => {
         beforeEach(() => {
-            BrowserHistoryApi.getState.mockReturnValueOnce({
+            HistoryApi.getState.mockReturnValueOnce({
                 others: 'fake other props',
                 tabs: {
                     'old-tabs-1': {
@@ -53,7 +54,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
             });
         });
 
-        it('should BrowserHistoryApi.pushState called with new tab state added with existing other states', () => {
+        it('should HistoryApi.pushState called with new tab state added with existing other states', () => {
             // Arrange
             const mockSavePayload = {
                 tabsId: 'next-tabs-2',
@@ -82,13 +83,13 @@ describe('Service: ActivatedTabsHistoryService', () => {
             };
             const expectedNextUrl = 'http://localhost/?old-tabs-1=old-tab-control-3&next-tabs-2=next-tab-control-2#next-tabs-2';
 
-            expect(BrowserHistoryApi.pushState).toHaveBeenCalledTimes(1);
-            expect(BrowserHistoryApi.pushState.mock.calls[0][0]).toEqual(expectedNextState);
-            expect(BrowserHistoryApi.pushState.mock.calls[0][1]).toBe('');
-            expect(BrowserHistoryApi.pushState.mock.calls[0][2].href).toBe(expectedNextUrl);
+            expect(HistoryApi.pushState).toHaveBeenCalledTimes(1);
+            expect(HistoryApi.pushState.mock.calls[0][0]).toEqual(expectedNextState);
+            expect(HistoryApi.pushState.mock.calls[0][1]).toBe('');
+            expect(HistoryApi.pushState.mock.calls[0][2].href).toBe(expectedNextUrl);
         });
 
-        it('should BrowserHistoryApi.pushState called with updated tab state overwrite existing state', () => {
+        it('should HistoryApi.pushState called with updated tab state overwrite existing state', () => {
             // Arrange
             const mockSavePayload = {
                 tabsId: 'old-tabs-1',
@@ -113,13 +114,13 @@ describe('Service: ActivatedTabsHistoryService', () => {
             };
             const expectedNextUrl = 'http://localhost/?old-tabs-1=updated-old-tab-control-2#old-tabs-1';
 
-            expect(BrowserHistoryApi.pushState).toHaveBeenCalledTimes(1);
-            expect(BrowserHistoryApi.pushState.mock.calls[0][0]).toEqual(expectedNextState);
-            expect(BrowserHistoryApi.pushState.mock.calls[0][1]).toBe('');
-            expect(BrowserHistoryApi.pushState.mock.calls[0][2].href).toBe(expectedNextUrl);
+            expect(HistoryApi.pushState).toHaveBeenCalledTimes(1);
+            expect(HistoryApi.pushState.mock.calls[0][0]).toEqual(expectedNextState);
+            expect(HistoryApi.pushState.mock.calls[0][1]).toBe('');
+            expect(HistoryApi.pushState.mock.calls[0][2].href).toBe(expectedNextUrl);
         });
 
-        it('should BrowserHistoryApi.pushState throw error when called without tabsId payload', () => {
+        it('should HistoryApi.pushState throw error when called without tabsId payload', () => {
             // Arrange
             const mockSavePayload = {
                 selectedTabState: {}
@@ -130,6 +131,90 @@ describe('Service: ActivatedTabsHistoryService', () => {
 
             // Assert
             expect(whenSaveCalledWithoutTabsId).toThrow('[ActivatedTabsHistoryService]: Save failure due to invalid tabsId');
+        });
+    });
+
+    describe('Given #replaceState is called', () => {
+        it('should HistoryApi.replaceState called with next state that included new tabs state and other existing states', () => {
+            // Arrange
+            const mockExistingState = {
+                somethingElse: 'test other props',
+                tabs: {
+                    td1: {
+                        id: 'tc-item-1',
+                        associateId: 'tp-item-2'
+                    }
+                }
+            };
+            const mockNewTabsState = {
+                tdNew: {
+                    id: 'tdnc-item-5',
+                    associatedId: 'tdnp-item-5'
+                }
+            };
+            HistoryApi.getState.mockReturnValueOnce(mockExistingState);
+
+            // Act
+            ActivatedTabsHistoryService.replaceState(mockNewTabsState);
+
+            // Assert
+            const expected = {
+                somethingElse: 'test other props',
+                tabs: {
+                    td1: {
+                        id: 'tc-item-1',
+                        associateId: 'tp-item-2'
+                    },
+                    tdNew: {
+                        id: 'tdnc-item-5',
+                        associatedId: 'tdnp-item-5'
+                    }
+                }
+            };
+            expect(HistoryApi.replaceState).toHaveBeenNthCalledWith(1, expected, '');
+        });
+
+        it('should HistoryApi.replaceState called with next state that update existing tabs state', () => {
+            // Arrange
+            const mockExistingState = {
+                somethingElse: 'test other props',
+                tabs: {
+                    td1: {
+                        id: 'tc-item-1',
+                        associateId: 'tp-item-2'
+                    },
+                    tdNew: {
+                        id: 'tdnc-item-5',
+                        associatedId: 'tdnp-item-5'
+                    }
+                }
+            };
+            const mockUpdatedTabsState = {
+                tdNew: {
+                    id: 'tdnc-item-latest',
+                    associatedId: 'tdnp-item-latest'
+                }
+            };
+            HistoryApi.getState.mockReturnValueOnce(mockExistingState);
+
+            // Act
+            ActivatedTabsHistoryService.replaceState(mockUpdatedTabsState);
+
+            // Assert
+            const expected = {
+                somethingElse: 'test other props',
+                tabs: {
+                    td1: {
+                        id: 'tc-item-1',
+                        associateId: 'tp-item-2'
+                    },
+                    tdNew: {
+                        id: 'tdnc-item-latest',
+                        associatedId: 'tdnp-item-latest'
+                    }
+                }
+            };
+            expect(HistoryApi.replaceState).toHaveBeenNthCalledWith(1, expected, '');
         });
     });
 });

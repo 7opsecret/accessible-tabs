@@ -1,6 +1,6 @@
 import { isArray } from '~/src/utils/assert';
 
-export const PubSubServices = (() => {
+export const PubSubService = (() => {
     const subscribers = {};
 
     const subscribe = (event, callback) => {
