@@ -27,14 +27,10 @@ const expectFocusedTabControlIsActive = ({
         .and('contain.text', containText);
 }
 
-describe('Validate tabs activation and history are working correctly', () => {
+describe('Validate tab order works correctly', () => {
     before(() => {
         cy.visit('/');
-    });
-
-    it('should pass accessibility test', () => {
         cy.injectAxe();
-        cy.checkA11y();
     });
 
     it('should tab order works correctly', () => {
@@ -94,5 +90,9 @@ describe('Validate tabs activation and history are working correctly', () => {
             ariaLabelledBy: 'tab-control-vertical-tabs-1-item-1',
             containText: 'With vertical orientation. You can navigate between'
         });
+    });
+
+    it('should pass accessibility test', () => {
+        cy.checkA11y();
     });
 });

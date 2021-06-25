@@ -1,68 +1,14 @@
-const expectSelectedTabControlIsActiveWhileOthersNot = ({
-    totalControls,
-    id,
-    contextSelector,
-    ariaControls,
-    containText
-}) => {
-    cy.get(contextSelector)
-        .find('.tab-control')
-        .should('have.length', totalControls)
-        .and('have.attr', 'role', 'tab');
+import {
+    expectSelectedTabIsActiveWhileOthersNot
+} from '../support/helpers';
 
-    cy.get(contextSelector)
-        .find('.tab-control.tab-control--selected')
-        .should('have.id', id)
-        .and('have.attr', 'aria-controls', ariaControls)
-        .and('have.attr', 'aria-selected', 'true')
-        .and('have.attr', 'tabindex', 0)
-        .and('contain.text', containText);
-
-    cy.get(contextSelector)
-        .find('.tab-control')
-        .not('.tab-control--selected')
-        .should('have.length', totalControls - 1)
-        .each(($el) => {
-            cy.wrap($el)
-                .should('have.attr', 'tabindex', -1)
-                .and('have.attr', 'aria-selected', 'false');
-        });
-}
-
-const expectSelectedTabPanelIsActiveWhileOthersNot = ({
-    totalPanels,
-    contextSelector,
-    id,
-    ariaLabelledBy
-}) => {
-    cy.get(contextSelector)
-        .find('.tab-panel')
-        .should('have.length', totalPanels);
-
-    cy.get(contextSelector)
-        .find('.tab-panel.tab-panel--selected')
-        .should('have.length', 1)
-        .and('have.id', id)
-        .and('have.attr', 'aria-labelledby', ariaLabelledBy)
-        .not('have.attr', 'hidden');
-
-    cy.get(contextSelector)
-        .find('.tab-panel')
-        .not('.tab-panel--selected')
-        .should('have.length', totalPanels - 1)
-        .each(($el) => {
-            cy.wrap($el)
-                .should('have.attr', 'hidden')
-        });
-}
-
-describe('Validate tabs activation and history are working correctly', () => {
+describe('Validate tabs selection and history state are working correctly', () => {
     before(() => {
         cy.visit('/');
+        cy.injectAxe();
     });
 
     it('should pass accessibility test', () => {
-        cy.injectAxe();
         cy.checkA11y();
     });
 
@@ -82,70 +28,42 @@ describe('Validate tabs activation and history are working correctly', () => {
         });
 
         it('should Horizontal Tabs 1\'s selected tab activated', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
         it('should Horizontal Tabs 2 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-1',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-1',
-                containText: 'Tab 1'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-1',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-1'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-1',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-1',
+                tabControlText: 'Tab 1'
             });
         });
 
         it('should Vertical Tabs 1 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-1',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-1',
-                containText: 'Tab 1'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-1',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-1'
+                tabControlId: 'tab-control-vertical-tabs-1-item-1',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-1',
+                tabControlText: 'Tab 1'
             });
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-2',
-                ariaControls: 'tab-panel-2',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-2',
-                ariaLabelledBy: 'tab-control-2'
+                tabControlId: 'tab-control-2',
+                tabPanelId: 'tab-panel-2',
+                tabControlText: 'No title tab'
             });
         });
     });
@@ -167,70 +85,42 @@ describe('Validate tabs activation and history are working correctly', () => {
         });
 
         it('should Horizontal Tabs 1\'s selected tab activated', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
         it('should Horizontal Tabs 2\'s selected tab activated', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
         });
 
         it('should Vertical Tabs 1 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-1',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-1',
-                containText: 'Tab 1'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-1',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-1'
+                tabControlId: 'tab-control-vertical-tabs-1-item-1',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-1',
+                tabControlText: 'Tab 1'
             });
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-2',
-                ariaControls: 'tab-panel-2',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-2',
-                ariaLabelledBy: 'tab-control-2'
+                tabControlId: 'tab-control-2',
+                tabPanelId: 'tab-panel-2',
+                tabControlText: 'No title tab'
             });
         });
     });
@@ -252,71 +142,43 @@ describe('Validate tabs activation and history are working correctly', () => {
                 });
         });
 
-        it('should Horizontal Tabs 1 (tab group) previous state retained', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+        it('should Horizontal Tabs 1\'s selected tab activated', () => {
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
-        it('should Horizontal Tabs 2 (tab group) previous state retained', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+        it('should Horizontal Tabs 2\'s selected tab activated', () => {
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
         });
 
         it('should Vertical Tabs 1 (tab group) tab activated successfully', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-3',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-3'
+                tabControlId: 'tab-control-vertical-tabs-1-item-3',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-2',
-                ariaControls: 'tab-panel-2',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-2',
-                ariaLabelledBy: 'tab-control-2'
+                tabControlId: 'tab-control-2',
+                tabPanelId: 'tab-panel-2',
+                tabControlText: 'No title tab'
             });
         });
     });
@@ -338,70 +200,42 @@ describe('Validate tabs activation and history are working correctly', () => {
         });
 
         it('should Horizontal Tabs 1 (tab group) previous state retained', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
         it('should Horizontal Tabs 2 (tab group) previous state retained', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
         });
 
         it('should Vertical Tabs 1 (tab group) previous state retained', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-3',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-3'
+                tabControlId: 'tab-control-vertical-tabs-1-item-3',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
         });
 
         it('should Vertical Tabs 2 (tab group) tab activated successfully', () => {
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-3',
-                ariaControls: 'tab-panel-3',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-3',
-                ariaLabelledBy: 'tab-control-3'
+                tabControlId: 'tab-control-3',
+                tabPanelId: 'tab-panel-3',
+                tabControlText: 'No title tab'
             });
         });
     });
@@ -417,67 +251,39 @@ describe('Validate tabs activation and history are working correctly', () => {
                 });
 
             // Horizontal Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
 
             // Horizontal Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
 
             // Vertical Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-3',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-3'
+                tabControlId: 'tab-control-vertical-tabs-1-item-3',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
 
             // Vertical Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-2',
-                ariaControls: 'tab-panel-2',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-2',
-                ariaLabelledBy: 'tab-control-2'
+                tabControlId: 'tab-control-2',
+                tabPanelId: 'tab-panel-2',
+                tabControlText: 'No title tab'
             });
         });
 
@@ -491,67 +297,39 @@ describe('Validate tabs activation and history are working correctly', () => {
                 });
 
             // Horizontal Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
 
             // Horizontal Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
 
             // Vertical Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-2',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-2',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-2'
+                tabControlId: 'tab-control-vertical-tabs-1-item-2',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-2',
+                tabControlText: 'Tab 2'
             });
 
             // Vertical Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-2',
-                ariaControls: 'tab-panel-2',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-2',
-                ariaLabelledBy: 'tab-control-2'
+                tabControlId: 'tab-control-2',
+                tabPanelId: 'tab-panel-2',
+                tabControlText: 'No title tab'
             });
         });
 
@@ -567,67 +345,39 @@ describe('Validate tabs activation and history are working correctly', () => {
                 });
 
             // Horizontal Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
-                id: 'tab-control-horizontal-tabs-1-item-3',
-                ariaControls: 'tab-panel-horizontal-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#horizontal-tabs-1',
-                id: 'tab-panel-horizontal-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-3'
+                tabControlId: 'tab-control-horizontal-tabs-1-item-3',
+                tabPanelId: 'tab-panel-horizontal-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
 
             // Horizontal Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 2,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
-                id: 'tab-control-horizontal-tabs-2-item-2',
-                ariaControls: 'tab-panel-horizontal-tabs-2-item-2',
-                containText: 'Tab 2'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 2,
-                contextSelector: '#horizontal-tabs-2',
-                id: 'tab-panel-horizontal-tabs-2-item-2',
-                ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-2'
+                tabControlId: 'tab-control-horizontal-tabs-2-item-2',
+                tabPanelId: 'tab-panel-horizontal-tabs-2-item-2',
+                tabControlText: 'Tab 2'
             });
 
             // Vertical Tabs 1 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
-                id: 'tab-control-vertical-tabs-1-item-3',
-                ariaControls: 'tab-panel-vertical-tabs-1-item-3',
-                containText: 'Tab 3'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#vertical-tabs-1',
-                id: 'tab-panel-vertical-tabs-1-item-3',
-                ariaLabelledBy: 'tab-control-vertical-tabs-1-item-3'
+                tabControlId: 'tab-control-vertical-tabs-1-item-3',
+                tabPanelId: 'tab-panel-vertical-tabs-1-item-3',
+                tabControlText: 'Tab 3'
             });
 
             // Vertical Tabs 2 (tab group)
-            expectSelectedTabControlIsActiveWhileOthersNot({
-                totalControls: 3,
+            expectSelectedTabIsActiveWhileOthersNot({
+                totalItems: 3,
                 contextSelector: '#tabs-1',
-                id: 'tab-control-3',
-                ariaControls: 'tab-panel-3',
-                containText: 'No title tab'
-            });
-
-            expectSelectedTabPanelIsActiveWhileOthersNot({
-                totalPanels: 3,
-                contextSelector: '#tabs-1',
-                id: 'tab-panel-3',
-                ariaLabelledBy: 'tab-control-3'
+                tabControlId: 'tab-control-3',
+                tabPanelId: 'tab-panel-3',
+                tabControlText: 'No title tab'
             });
         });
     });
