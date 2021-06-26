@@ -91,7 +91,7 @@ Elements that serves as tabs.
 
 | Attributes             | Required or Optional       | Description                                                                                             |
 | :--------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------ |
-| `class`                | required - `js-tab-panel`  | Class name `js-tab-panel` is compulsory to be recognize as a valid **Tab**                              |
+| `class`                | required - `js-tab-panel`  | Class name `js-tab-panel` is compulsory to be recognize as a valid **Tab** to be processed by JS.       |
 | `id`                   | optional (but recommended) | For browser history management and direct link tabs activation purposes.                                |
 | `data-tab-title`       | optional (but recommended) | This will be display as Tab Control's (button) label. If non provided It'll fallback to "No title tab". |
 ### JavaScript
