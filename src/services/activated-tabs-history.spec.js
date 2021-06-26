@@ -43,7 +43,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
 
     describe('Given #save is called', () => {
         beforeEach(() => {
-            HistoryApi.getState.mockReturnValueOnce({
+            HistoryApi.getState.mockReturnValue({
                 others: 'fake other props',
                 tabs: {
                     'old-tabs-1': {
@@ -118,6 +118,23 @@ describe('Service: ActivatedTabsHistoryService', () => {
             expect(HistoryApi.pushState.mock.calls[0][0]).toEqual(expectedNextState);
             expect(HistoryApi.pushState.mock.calls[0][1]).toBe('');
             expect(HistoryApi.pushState.mock.calls[0][2].href).toBe(expectedNextUrl);
+        });
+
+        it('should HistoryApi.pushState not called when previous state and next state are same', () => {
+            // Arrange
+            const mockSavePayload = {
+                tabsId: 'old-tabs-1',
+                selectedTabState: {
+                    id: 'old-tab-control-3',
+                    associateId: 'old-tab-panel-3'
+                }
+            };
+
+            // Act
+            ActivatedTabsHistoryService.save(mockSavePayload);
+
+            // Assert
+            expect(HistoryApi.pushState).not.toHaveBeenCalled();
         });
 
         it('should HistoryApi.pushState throw error when called without tabsId payload', () => {
@@ -215,6 +232,34 @@ describe('Service: ActivatedTabsHistoryService', () => {
                 }
             };
             expect(HistoryApi.replaceState).toHaveBeenNthCalledWith(1, expected, '');
+        });
+
+        it('should HistoryApi.replaceState not called when previous state and next state are same', () => {
+            // Arrange
+            const mockExistingState = {
+                somethingElse: 'irrelevant',
+                tabs: {
+                    td1: {
+                        id: 'tc-item-1',
+                        associateId: 'tp-item-2'
+                    }
+                }
+            }
+            const mockUpdatedTabsState = {
+                td1: {
+                    id: 'tc-item-1',
+                    associateId: 'tp-item-2'
+                }
+            };
+            HistoryApi.getState.mockReturnValue(mockExistingState);
+
+            console.log('---- prev ', HistoryApi.getState())
+
+            // Act
+            ActivatedTabsHistoryService.replaceState(mockUpdatedTabsState);
+
+            // Assert
+            expect(HistoryApi.replaceState).not.toHaveBeenCalled();
         });
     });
 });

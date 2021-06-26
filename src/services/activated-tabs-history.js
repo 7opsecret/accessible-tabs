@@ -30,6 +30,14 @@ export const ActivatedTabsHistoryService = (() => {
         return url;
     }
 
+    const _isNextStateSameAsPrevState = (nextState) => {
+        const prevState = HistoryApi.getState() || {};
+        const prevStateString = JSON.stringify(prevState);
+        const nextStateString = JSON.stringify(nextState);
+
+        return nextStateString === prevStateString;
+    }
+
     // Public
     const mount = ({
         tabsId,
@@ -61,11 +69,19 @@ export const ActivatedTabsHistoryService = (() => {
         const nextState = _mergeTabsState(newTabsState);
         const nextUrl   = _createUrlWithAllSelectedTabs(nextState.tabs, tabsId);
 
+        if(_isNextStateSameAsPrevState(nextState)) {
+            return;
+        }
+
         HistoryApi.pushState(nextState, '', nextUrl);
     }
 
     const replaceState = (newTabsState) => {
         const nextState = _mergeTabsState(newTabsState);
+
+        if(_isNextStateSameAsPrevState(nextState)) {
+            return;
+        }
 
         HistoryApi.replaceState(nextState, '');
     }
