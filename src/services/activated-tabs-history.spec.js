@@ -38,6 +38,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
             // Assert
             expect(PubSubService.subscribe).toHaveBeenNthCalledWith(1, 'mock-tabs-id', mockUiUpdaterCallback);
             expect(HistoryApi.addEventListener).toHaveBeenCalledTimes(1);
+            expect(typeof HistoryApi.addEventListener.mock.calls[0][0]).toBe('function');
         });
     });
 
@@ -169,7 +170,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
                     associatedId: 'tdnp-item-5'
                 }
             };
-            HistoryApi.getState.mockReturnValueOnce(mockExistingState);
+            HistoryApi.getState.mockReturnValue(mockExistingState);
 
             // Act
             ActivatedTabsHistoryService.replaceState(mockNewTabsState);
@@ -212,7 +213,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
                     associatedId: 'tdnp-item-latest'
                 }
             };
-            HistoryApi.getState.mockReturnValueOnce(mockExistingState);
+            HistoryApi.getState.mockReturnValue(mockExistingState);
 
             // Act
             ActivatedTabsHistoryService.replaceState(mockUpdatedTabsState);
@@ -252,8 +253,6 @@ describe('Service: ActivatedTabsHistoryService', () => {
                 }
             };
             HistoryApi.getState.mockReturnValue(mockExistingState);
-
-            console.log('---- prev ', HistoryApi.getState())
 
             // Act
             ActivatedTabsHistoryService.replaceState(mockUpdatedTabsState);

@@ -14,19 +14,17 @@
     "test:unit:watch": "jest --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "Danny Chin",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.5",
+    "axe-core": "^4.2.3",
     "babel-jest": "^27.0.2",
     "cypress": "^7.5.0",
+    "cypress-axe": "^0.12.2",
     "cypress-plugin-tab": "^1.0.5",
     "jest": "^27.0.4",
     "parcel": "^2.0.0-beta.3.1"
-  },
-  "dependencies": {
-    "axe-core": "^4.2.3",
-    "cypress-axe": "^0.12.2"
   }
 }

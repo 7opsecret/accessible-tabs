@@ -2,15 +2,6 @@ import TabPanel from '.';
 
 describe('Component: TabPanel', () => {
     const initTabPanel = (...args) => () => new TabPanel(args);
-    const WITH_DEFAULT_SELECTED_OPTIONS = {
-        id: 'tab-panel-1',
-        associateId: 'tab-control-1',
-        defaultSelected: true
-    };
-    const WITHOUT_DEFAULT_SELECTED_OPTIONS = {
-        id: 'tab-panel-1',
-        associateId: 'tab-control-1'
-    };
     let panelEl;
 
     beforeEach(() => {
@@ -46,7 +37,11 @@ describe('Component: TabPanel', () => {
         beforeAll(() => {
             tabPanel = new TabPanel(
                 panelEl,
-                WITH_DEFAULT_SELECTED_OPTIONS
+                {
+                    id: 'tab-panel-1',
+                    associateId: 'tab-control-1',
+                    defaultSelected: true
+                }
             );
         });
 
@@ -80,7 +75,10 @@ describe('Component: TabPanel', () => {
             // Arrange
             const tabPanel = new TabPanel(
                 panelEl,
-                WITHOUT_DEFAULT_SELECTED_OPTIONS
+                {
+                    id: 'tab-panel-1',
+                    associateId: 'tab-control-1'
+                }
             );
 
             // Assert

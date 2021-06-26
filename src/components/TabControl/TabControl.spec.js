@@ -3,17 +3,6 @@ import TabControl from '.';
 
 describe('Component: TabControl', () => {
     const initTabControl = (...args) => () => new TabControl(args);
-    const WITH_DEFAULT_SELECTED_OPTIONS = {
-        associateId: 'tab-Control-1',
-        defaultSelected: true,
-        id: 'tab-control-1',
-        title: 'Tab title 1',
-    };
-    const WITHOUT_DEFAULT_SELECTED_OPTIONS = {
-        associateId: 'tab-Control-1',
-        id: 'tab-control-1',
-        title: 'Tab title 1'
-    };
     let controlEl;
 
     beforeEach(() => {
@@ -102,7 +91,12 @@ describe('Component: TabControl', () => {
         beforeAll(() => {
             tabControl = new TabControl(
                 controlEl,
-                WITH_DEFAULT_SELECTED_OPTIONS
+                {
+                    associateId: 'tab-Control-1',
+                    defaultSelected: true,
+                    id: 'tab-control-1',
+                    title: 'Tab title 1',
+                }
             );
         });
 
@@ -136,7 +130,11 @@ describe('Component: TabControl', () => {
             // Arrange
             const tabControl = new TabControl(
                 controlEl,
-                WITHOUT_DEFAULT_SELECTED_OPTIONS
+                {
+                    associateId: 'tab-Control-1',
+                    id: 'tab-control-1',
+                    title: 'Tab title 1'
+                }
             );
 
             // Assert

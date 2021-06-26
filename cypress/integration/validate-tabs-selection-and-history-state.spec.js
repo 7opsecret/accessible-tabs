@@ -9,17 +9,20 @@ describe('Validate tabs selection and history state are working correctly', () =
     });
 
     it('should pass accessibility test', () => {
+        // Assert
         cy.checkA11y();
     });
 
-    context('When TAB pressed once after page load and Horizontal Tabs 1\'s first tab was focused and pressed LEFT ARROW', () => {
+    context('When TAB pressed once after page load and Horizontal Tabs 1 (tab group) first tab was focused and pressed LEFT ARROW', () => {
         before(() => {
+            // Act
             cy.get('body')
                 .tab()
                 .type('{leftarrow}');
         });
 
         it('should url and history updated with previous state which included activated tabs from all other tab groups in the page', () => {
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3');
@@ -27,7 +30,8 @@ describe('Validate tabs selection and history state are working correctly', () =
                 });
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -38,6 +42,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Horizontal Tabs 2 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -48,6 +53,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 1 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -58,6 +64,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -68,8 +75,9 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
     });
 
-    context('When Horizontal Tabs 2\'s 2nd (from left) item is clicked and activated', () => {
+    context('When Horizontal Tabs 2 (tab group) 2nd (from left) Tab Control (button) is clicked and activated', () => {
         before(() => {
+            // Act
             cy.get('#horizontal-tabs-2 .tab-list')
                 .find('.tab-control')
                 .eq(1)
@@ -77,6 +85,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should url and history updated with previous state which included activated tabs from all other tab groups in the page', () => {
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2');
@@ -84,7 +93,8 @@ describe('Validate tabs selection and history state are working correctly', () =
                 });
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -94,7 +104,8 @@ describe('Validate tabs selection and history state are working correctly', () =
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -105,6 +116,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 1 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -115,6 +127,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -125,8 +138,9 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
     });
 
-    context('When TAB pressed 3 times from last focused element (Horizontal Tabs 2\'s "Tab 2" tab control) and pressed DOWN ARROW twice', () => {
+    context('When TAB pressed 3 times from last focused element (Horizontal Tabs 2 (tab group) "Tab 2" Tab Control) and pressed DOWN ARROW twice', () => {
         before(() => {
+            // Act
             cy.focused()
                 .tab()
                 .tab()
@@ -135,6 +149,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should url and history updated with previous state which included activated tabs from all other tab groups in the page', () => {
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2&vertical-tabs-1=tab-control-vertical-tabs-1-item-3');
@@ -142,7 +157,8 @@ describe('Validate tabs selection and history state are working correctly', () =
                 });
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -152,7 +168,8 @@ describe('Validate tabs selection and history state are working correctly', () =
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -163,6 +180,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 1 (tab group) tab activated successfully', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -173,6 +191,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 2 (tab group) remain default unchanged', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -183,8 +202,9 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
     });
 
-    context('When Vertical Tabs 2\'s 2nd (from top) item is clicked and activated', () => {
+    context('When Vertical Tabs 2 (tab group) 2nd (from top) Tab Control (button) is clicked and activated', () => {
         before(() => {
+            // Act
             cy.get('#tabs-1 .tab-list')
                 .find('.tab-control')
                 .eq(1)
@@ -192,6 +212,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should url and history updated with dynamic generated id (for no id provided tabs) and previous state which included activated tabs from all other tab groups in the page', () => {
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2&vertical-tabs-1=tab-control-vertical-tabs-1-item-3&tabs-1=tab-control-3');
@@ -200,6 +221,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Horizontal Tabs 1 (tab group) previous state retained', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -210,6 +232,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Horizontal Tabs 2 (tab group) previous state retained', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -220,6 +243,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 1 (tab group) previous state retained', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -230,6 +254,7 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should Vertical Tabs 2 (tab group) tab activated successfully', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -242,8 +267,10 @@ describe('Validate tabs selection and history state are working correctly', () =
 
     context('When navigate back or forward between browser history', () => {
         it('should all activated tabs and url render correctly when go back once', () => {
+            // Act
             cy.go('back');
 
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2&vertical-tabs-1=tab-control-vertical-tabs-1-item-3');
@@ -288,8 +315,10 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should all activated tabs and url render correctly when go back again', () => {
+            // Act
             cy.go('back');
 
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2&vertical-tabs-1=tab-control-vertical-tabs-1-item-2');
@@ -334,10 +363,11 @@ describe('Validate tabs selection and history state are working correctly', () =
         });
 
         it('should all activated tabs and url render correctly when go forward twice', () => {
+            // Act
             cy.go('forward')
                 .go('forward');
 
-            // url and history updated with dynamic
+            // Assert
             cy.location()
                 .should((loc) => {
                     expect(loc.search).to.eq('?horizontal-tabs-1=tab-control-horizontal-tabs-1-item-3&horizontal-tabs-2=tab-control-horizontal-tabs-2-item-2&vertical-tabs-1=tab-control-vertical-tabs-1-item-3&tabs-1=tab-control-3');

@@ -9,7 +9,8 @@ describe('Validate tabs activation state from url works correctly', () => {
     });
 
     context('When page is loaded', () => {
-        it('should Horizontal Tabs 1\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -19,7 +20,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -29,7 +31,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 1\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -39,7 +42,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 2\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -50,12 +54,14 @@ describe('Validate tabs activation state from url works correctly', () => {
         });
 
         it('should pass accessibility test', () => {
+            // Assert
             cy.checkA11y();
         });
     });
 
-    context('When user select 1st tab from "Vertical Tabs 1" and 1st tab from "Horizontal Tabs 2"', () => {
+    context('When user select 1st tab from Vertical Tabs 1 (tab group) and 1st tab from Horizontal Tabs 2 (tab group)', () => {
         before(() => {
+            // Act
             cy.get('#vertical-tabs-1 .tab-list')
                 .find('.tab-control')
                 .eq(0)
@@ -66,7 +72,8 @@ describe('Validate tabs activation state from url works correctly', () => {
                 .type('{leftarrow}')
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -76,7 +83,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -86,7 +94,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 1\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -96,7 +105,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 2\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -107,17 +117,20 @@ describe('Validate tabs activation state from url works correctly', () => {
         });
 
         it('should pass accessibility test', () => {
+            // Assert
             cy.checkA11y();
         });
     });
 
     context('When navigate back twice browser history', () => {
         before(()=> {
+            // Act
             cy.go(-2)
                 .go('back');
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -127,7 +140,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -137,7 +151,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 1\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -147,7 +162,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 2\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -158,16 +174,19 @@ describe('Validate tabs activation state from url works correctly', () => {
         });
 
         it('should pass accessibility test', () => {
+            // Assert
             cy.checkA11y();
         });
     });
 
     context('When navigate forward once browser history', () => {
         before(()=> {
+            // Act
             cy.go('forward');
         });
 
-        it('should Horizontal Tabs 1\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#horizontal-tabs-1',
@@ -177,7 +196,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Horizontal Tabs 2\'s selected tab activated correctly', () => {
+        it('should Horizontal Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 2,
                 contextSelector: '#horizontal-tabs-2',
@@ -187,7 +207,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 1\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 1 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#vertical-tabs-1',
@@ -197,7 +218,8 @@ describe('Validate tabs activation state from url works correctly', () => {
             });
         });
 
-        it('should Vertical Tabs 2\'s selected tab activated correctly', () => {
+        it('should Vertical Tabs 2 (tab group) selected tab activated correctly', () => {
+            // Assert
             expectSelectedTabIsActiveWhileOthersNot({
                 totalItems: 3,
                 contextSelector: '#tabs-1',
@@ -208,6 +230,7 @@ describe('Validate tabs activation state from url works correctly', () => {
         });
 
         it('should pass accessibility test', () => {
+            // Assert
             cy.checkA11y();
         });
     });

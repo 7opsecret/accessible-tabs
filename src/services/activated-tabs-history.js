@@ -62,8 +62,8 @@ export const ActivatedTabsHistoryService = (() => {
         }
         const newTabsState  = {
             [tabsId]: {
-                id: selectedTabState.id,
-                associateId: selectedTabState.associateId
+                id: selectedTabState?.id,
+                associateId: selectedTabState?.associateId
             }
         }
         const nextState = _mergeTabsState(newTabsState);

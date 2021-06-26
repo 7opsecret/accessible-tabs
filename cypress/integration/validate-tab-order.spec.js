@@ -40,10 +40,12 @@ describe('Validate TAB order works correctly', () => {
         cy.injectAxe();
     });
 
-    it('should Horizontal Tabs 1 TAB order works correctly', () => {
+    it('should Horizontal Tabs 1 (tab group) TAB order works correctly', () => {
+        // Act
         cy.get('body')
             .tab();
 
+        // Assert
         expectFocusedTabControlIsActive({
             id: 'tab-control-horizontal-tabs-1-item-1',
             ariaControls: 'tab-panel-horizontal-tabs-1-item-1',
@@ -51,22 +53,25 @@ describe('Validate TAB order works correctly', () => {
             containText: 'Tab 1'
         });
 
+        // Act
         cy.focused()
             .tab();
 
+        // Assert
         expectFocusedTabPanelIsActive({
             id: 'tab-panel-horizontal-tabs-1-item-1',
             ariaLabelledBy: 'tab-control-horizontal-tabs-1-item-1',
             containText: 'With horizontal orientation. You can navigate between'
         });
-
         expectHistoryStateToBeNull();
     });
 
-    it('should Horizontal Tabs 2 TAB order works correctly', () => {
+    it('should Horizontal Tabs 2 (tab group) TAB order works correctly', () => {
+        // Act
         cy.focused()
             .tab();
 
+        // Assert
         expectFocusedTabControlIsActive({
             id: 'tab-control-horizontal-tabs-2-item-1',
             ariaControls: 'tab-panel-horizontal-tabs-2-item-1',
@@ -74,22 +79,25 @@ describe('Validate TAB order works correctly', () => {
             containText: 'Tab 1'
         });
 
+        // Act
         cy.focused()
             .tab();
 
+        // Assert
         expectFocusedTabPanelIsActive({
             id: 'tab-panel-horizontal-tabs-2-item-1',
             ariaLabelledBy: 'tab-control-horizontal-tabs-2-item-1',
             containText: 'Tab 2-1 Lorem ipsum dolor sit amet, consectetur adipiscing elit'
         });
-
         expectHistoryStateToBeNull();
     });
 
-    it('should Vertical Tabs 1 TAB order works correctly', () => {
+    it('should Vertical Tabs 1 (tab group) TAB order works correctly', () => {
+        // Act
         cy.focused()
             .tab();
 
+        // Assert
         expectFocusedTabControlIsActive({
             id: 'tab-control-vertical-tabs-1-item-1',
             ariaControls: 'tab-panel-vertical-tabs-1-item-1',
@@ -97,19 +105,21 @@ describe('Validate TAB order works correctly', () => {
             containText: 'Tab 1'
         });
 
+        // Act
         cy.focused()
             .tab();
 
+        // Assert
         expectFocusedTabPanelIsActive({
             id: 'tab-panel-vertical-tabs-1-item-1',
             ariaLabelledBy: 'tab-control-vertical-tabs-1-item-1',
             containText: 'With vertical orientation. You can navigate between'
         });
-
         expectHistoryStateToBeNull();
     });
 
     it('should pass accessibility test', () => {
+        // Assert
         cy.checkA11y();
     });
 });

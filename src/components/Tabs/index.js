@@ -35,12 +35,12 @@ export default class Tabs {
         const panelEls = element.getElementsByClassName(PANEL_CSS_SELECTOR);
         if (!panelEls.length) return; // Silently bailed if no panels found
 
-        this.element     = element;
-        this.tabsId      = element.id || `tabs-${uid()}`;
-        this.tabItems    = null;
-        this.tabList     = null;
-        this.panelEls    = panelEls;
-        this.orientation = AriaValidationService.isValidOrientation(orientation)
+        this.element         = element;
+        this.panelEls        = panelEls;
+        this.tabItemsService = null;
+        this.tabList         = null;
+        this.tabsId          = element.id || `tabs-${uid()}`;
+        this.orientation     = AriaValidationService.isValidOrientation(orientation)
             ? orientation.toLowerCase()
             : ARIA_ORIENTATION.HORIZONTAL; // fallback to horizontal
         this.isVerticalOrientation = this.orientation === ARIA_ORIENTATION.VERTICAL;
@@ -52,7 +52,7 @@ export default class Tabs {
         if(!this.element.id) {
             this.element.id = this.tabsId;
         }
-        this.tabItems = new TabItemsService();
+        this.tabItemsService = new TabItemsService();
         this.tabList  = new TabList(
             document.createElement('div'),
             {
@@ -67,7 +67,7 @@ export default class Tabs {
     }
 
     subscribeHistoryService() {
-        const firstTabItem = this.tabItems.findChildByIndex(0);
+        const firstTabItem = this.tabItemsService.findChildByIndex(0);
         ActivatedTabsHistoryService.mount({
             tabsId: this.tabsId,
             uiUpdaterCallback: this.selectNextTabByControl.bind(this),
@@ -80,7 +80,7 @@ export default class Tabs {
 
     syncStateFromSearchParams() {
         const potentialControlId = new URLSearchParams(window.location.search).get(this.tabsId);
-        const tabControlInstance = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
+        const tabControlInstance = this.tabItemsService.findChildByTabControlId(potentialControlId)?.tabControl;
         if (!tabControlInstance) return;
         this.selectNextTabByControl(tabControlInstance);
         ActivatedTabsHistoryService.replaceState({
@@ -126,7 +126,7 @@ export default class Tabs {
 
             const tabControl = new TabControl(document.createElement('div'), tabControlOptions);
             const tabPanel   = new TabPanel(panelEl, tabPanelOptions);
-            this.tabItems.addChild({ tabControl, tabPanel });
+            this.tabItemsService.addChild({ tabControl, tabPanel });
             tabControlsFragment.appendChild(tabControl.element);
         });
 
@@ -151,7 +151,7 @@ export default class Tabs {
     }
 
     selectNextTabByControl(nextTabControl) {
-        this.tabItems.forEach(({
+        this.tabItemsService.forEach(({
             tabPanel,
             tabControl
         }) => {
@@ -161,13 +161,13 @@ export default class Tabs {
     }
 
     setFocusOnNextControlByDirection(e, directionKeyCode) {
-        const currentTabControlIndex = this.tabItems.findChildIndexByTabControlId(e.currentTarget.id);
+        const currentTabControlIndex = this.tabItemsService.findChildIndexByTabControlId(e.currentTarget.id);
         const nextIndex              = DIRECTION[directionKeyCode] + currentTabControlIndex;
         this.setFocusOnNextControlByIndex(nextIndex);
     }
 
     setFocusOnNextControlByIndex(nextIndex) {
-        const lastIndex = this.tabItems.lastChildIndex;
+        const lastIndex = this.tabItemsService.lastChildIndex;
         let _nextIndex = nextIndex;
 
         if (_nextIndex < 0) {
@@ -178,7 +178,7 @@ export default class Tabs {
             _nextIndex = 0;
         }
 
-        const selectedTabControl = this.tabItems.findChildByIndex(_nextIndex).tabControl;
+        const selectedTabControl = this.tabItemsService.findChildByIndex(_nextIndex).tabControl;
 
         if(selectedTabControl) {
             this.activateSelectedTabControl(selectedTabControl);
@@ -201,7 +201,7 @@ export default class Tabs {
                 break;
 
             case KEY.END:
-                this.setFocusOnNextControlByIndex(this.tabItems.lastChildIndex);
+                this.setFocusOnNextControlByIndex(this.tabItemsService.lastChildIndex);
                 break;
         }
     }
@@ -221,7 +221,7 @@ export default class Tabs {
                 break;
 
             case KEY.END:
-                this.setFocusOnNextControlByIndex(this.tabItems.lastChildIndex);
+                this.setFocusOnNextControlByIndex(this.tabItemsService.lastChildIndex);
                 break;
         }
     }
@@ -249,7 +249,7 @@ export default class Tabs {
     }
 
     handleTabControlClick = (e) => {
-        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
+        const selectedTabControl = this.tabItemsService.findChildByTabControlId(e.currentTarget.id)?.tabControl;
         this.activateSelectedTabControl(selectedTabControl)
     }
 }

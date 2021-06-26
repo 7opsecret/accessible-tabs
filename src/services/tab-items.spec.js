@@ -14,21 +14,21 @@ describe('Services: TabItemsService', () => {
 
     it('should getter: lastChildIndex return 2 when have 3 children', () => {
         // Arrange
-        const tabItems = new TabItemsService();
+        const tabItemsService = new TabItemsService();
 
         // Act
-        add3ChildrenToTabItemsServiceInstance(tabItems);
+        add3ChildrenToTabItemsServiceInstance(tabItemsService);
 
         // Assert
-        expect(tabItems.lastChildIndex).toBe(2);
+        expect(tabItemsService.lastChildIndex).toBe(2);
     });
 
     it('should #forEach throw error when called without any payload', () => {
         // Arrange
-        const tabItems = new TabItemsService();
+        const tabItemsService = new TabItemsService();
 
         // Assert
-        expect(() => tabItems.forEach()).toThrow('[TabItemsService] Invalid callback function');
+        expect(() => tabItemsService.forEach()).toThrow('[TabItemsService] Invalid callback function');
     });
 
     it.each`
@@ -42,51 +42,52 @@ describe('Services: TabItemsService', () => {
         arg
     }) => {
         // Arrange
-        const tabItems = new TabItemsService();
+        const tabItemsService = new TabItemsService();
 
         // Assert
-        expect(() => tabItems.forEach(arg)).toThrow('[TabItemsService] Invalid callback function');
+        expect(() => tabItemsService.forEach(arg))
+            .toThrow('[TabItemsService] Invalid callback function');
     });
 
     it('should #addChild add both TabPanel and TabControl instances as children as 1 object', () => {
         // Arrange
-        const tabItems  = new TabItemsService();
-        const mockChild = tabControlsAndPanelsFixtures(1)[0];
+        const tabItemsService = new TabItemsService();
+        const mockChild       = tabControlsAndPanelsFixtures(1)[0];
 
         // Act
-        tabItems.addChild(mockChild);
+        tabItemsService.addChild(mockChild);
 
         // Assert
-        expect(tabItems.children.length).toBe(1);
+        expect(tabItemsService.children.length).toBe(1);
     });
 
     it('should #addChild throw error when trying to add invalid data type', () => {
         // Arrange
-        const tabItems = new TabItemsService();
+        const tabItemsService = new TabItemsService();
 
         // Assert
-        expect(() => tabItems.addChild({}))
+        expect(() => tabItemsService.addChild({}))
             .toThrow('[TabItemsService] tabControl needs to be instance of TabControl');
     });
 
     it('should #addChild throw error when trying to add invalid tabPanel', () => {
         // Arrange
-        const tabItems             = new TabItemsService();
+        const tabItemsService      = new TabItemsService();
         const MockBadClass         = class {};
         const mockBadClassInstance = new MockBadClass();
         const { tabControl }       = tabControlsAndPanelsFixtures(1)[0];
 
         // Assert
-        expect(() => tabItems.addChild({ tabControl, tabPanel: mockBadClassInstance }))
+        expect(() => tabItemsService.addChild({ tabControl, tabPanel: mockBadClassInstance }))
             .toThrow('[TabItemsService] tabPanel needs to be instance of TabPanel');
     });
 
-    describe('When tabItems instance have 3 children', () => {
-        let tabItems;
+    describe('Given tabItems instance have 3 children', () => {
+        let tabItemsService;
 
         beforeAll(() => {
-            tabItems = new TabItemsService();
-            add3ChildrenToTabItemsServiceInstance(tabItems);
+            tabItemsService = new TabItemsService();
+            add3ChildrenToTabItemsServiceInstance(tabItemsService);
         });
 
         it('should #forEach callback function called 3 times with 3 children', () => {
@@ -94,7 +95,7 @@ describe('Services: TabItemsService', () => {
             const mockCallback = jest.fn();
 
             // Act
-            tabItems.forEach(mockCallback);
+            tabItemsService.forEach(mockCallback);
 
             // Assert
             expect(mockCallback).toHaveBeenCalledTimes(3);
@@ -102,7 +103,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildByTabControlId return both TabPanel and TabControl instances when matched found', () => {
             // Act
-            const received = tabItems.findChildByTabControlId('tab-control-1');
+            const received = tabItemsService.findChildByTabControlId('tab-control-1');
 
             // Assert
             expect(received).toMatchObject({
@@ -119,7 +120,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildByTabControlId return undefined when no matched found', () => {
             // Act
-            const received = tabItems.findChildByTabControlId('tabx-control-y');
+            const received = tabItemsService.findChildByTabControlId('tabx-control-y');
 
             // Assert
             expect(received).toBeUndefined();
@@ -127,7 +128,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildByIndex return child at specified index when specified index is valid', () => {
             // Act
-            const received = tabItems.findChildByIndex(2);
+            const received = tabItemsService.findChildByIndex(2);
 
             // Assert
             expect(received).toMatchObject({
@@ -144,7 +145,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildByIndex return undefined when specified index is invalid', () => {
             // Act
-            const received = tabItems.findChildByIndex(9999);
+            const received = tabItemsService.findChildByIndex(9999);
 
             // Assert
             expect(received).toBeUndefined();
@@ -152,7 +153,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildIndexByTabControlId return index of matched child when child exist', () => {
             // Act
-            const received = tabItems.findChildIndexByTabControlId('tab-control-1');
+            const received = tabItemsService.findChildIndexByTabControlId('tab-control-1');
 
             // Assert
             expect(received).toBe(1);
@@ -160,23 +161,23 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildIndexByTabControlId return -1 when child not exist', () => {
             // Act
-            const received = tabItems.findChildIndexByTabControlId('tab-panel-2');
+            const received = tabItemsService.findChildIndexByTabControlId('tab-panel-2');
 
             // Assert
             expect(received).toBe(-1);
         });
     });
 
-    describe('When tabItems have no children', () => {
-        let tabItems;
+    describe('Given tabItems have no children', () => {
+        let tabItemsService;
 
         beforeAll(() => {
-            tabItems = new TabItemsService();
+            tabItemsService = new TabItemsService();
         });
 
         it('should getter: lastChildIndex return -1 when request last index of children', () => {
             // Assert
-            expect(tabItems.lastChildIndex).toBe(-1);
+            expect(tabItemsService.lastChildIndex).toBe(-1);
         });
 
         it('should callback function not called when no children when #forEach called', () => {
@@ -184,7 +185,7 @@ describe('Services: TabItemsService', () => {
             const mockCallback = jest.fn();
 
             // Act
-            tabItems.forEach(mockCallback);
+            tabItemsService.forEach(mockCallback);
 
             // Assert
             expect(mockCallback).not.toHaveBeenCalled();
@@ -192,7 +193,7 @@ describe('Services: TabItemsService', () => {
 
         it('should #findChildByTabControlId called with 9999 return undefined when no children', () => {
             // Act
-            const received = tabItems.findChildByTabControlId(9999);
+            const received = tabItemsService.findChildByTabControlId(9999);
 
             // Assert
             expect(received).toBeUndefined();

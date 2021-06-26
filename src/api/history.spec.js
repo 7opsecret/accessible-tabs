@@ -18,7 +18,7 @@ describe('API: HistoryApi', () => {
         expect(received).toBe('mocked return state value');
     });
 
-    it('should #pushState trigger window.history.pushState called with all payload pass down', () => {
+    it('should #pushState trigger window.history.pushState that called with all payload pass down from HistoryApi.pushState', () => {
         // Arrange
         const historySpy = jest.spyOn(history, 'pushState');
 
@@ -29,7 +29,7 @@ describe('API: HistoryApi', () => {
         expect(historySpy).toHaveBeenNthCalledWith(1, 'a', 'c', 'b');
     });
 
-    it('should #replaceState trigger window.history.replaceState called with all payload pass down', () => {
+    it('should #replaceState trigger window.history.replaceState called with all payload pass down from HistoryApi.pushState', () => {
         // Arrange
         const historySpy = jest.spyOn(history, 'replaceState');
 
@@ -40,7 +40,7 @@ describe('API: HistoryApi', () => {
         expect(historySpy).toHaveBeenNthCalledWith(1, 'm1', 'r2', 'b2');
     });
 
-    it('should #addEventListener trigger PubSubServices.publish called with "popstate" and function as payload', () => {
+    it('should #addEventListener trigger PubSubServices.publish called with args - "popstate" and callback function', () => {
         // Arrange
         const mockCallback = jest.fn();
         const subscribeSpy = jest.spyOn(PubSubService, 'subscribe');
