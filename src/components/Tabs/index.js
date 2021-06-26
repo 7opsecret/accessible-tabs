@@ -81,19 +81,21 @@ export default class Tabs {
     syncStateFromSearchParams() {
         const potentialControlId = new URLSearchParams(window.location.search).get(this.tabsId);
         const tabControlInstance = this.tabItems.findChildByTabControlId(potentialControlId)?.tabControl;
-        if (tabControlInstance) {
-            this.selectNextTabByControl(tabControlInstance);
-            ActivatedTabsHistoryService.replaceState({
-                [this.tabsId]: {
-                    id: tabControlInstance.id,
-                    associateId: tabControlInstance.associateId
-                }
-            });
-        }
+        if (!tabControlInstance) return;
+        this.selectNextTabByControl(tabControlInstance);
+        ActivatedTabsHistoryService.replaceState({
+            [this.tabsId]: {
+                id: tabControlInstance.id,
+                associateId: tabControlInstance.associateId
+            }
+        });
     }
 
     setDefaultCssClasses() {
-        this.element.classList.add(TABS_BASE_CLASSNAME, TABS_BASE_CLASSNAME + '--' + this.orientation);
+        this.element.classList.add(
+            TABS_BASE_CLASSNAME,
+            TABS_BASE_CLASSNAME + '--' + this.orientation
+        );
     }
 
     setupPanelsAndControls() {
@@ -136,7 +138,7 @@ export default class Tabs {
         this.element.insertBefore(this.tabList.element, this.element.firstChild);
     }
 
-    activateSelectedTabControl = (selectedTabControl) => {
+    activateSelectedTabControl(selectedTabControl) {
         this.selectNextTabByControl(selectedTabControl);
 
         ActivatedTabsHistoryService.save({
@@ -146,11 +148,6 @@ export default class Tabs {
                 associateId: selectedTabControl.associateId
             }
         });
-    }
-
-    handleTabControlClick = (e) => {
-        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
-        this.activateSelectedTabControl(selectedTabControl)
     }
 
     selectNextTabByControl(nextTabControl) {
@@ -165,7 +162,7 @@ export default class Tabs {
 
     setFocusOnNextControlByDirection(e, directionKeyCode) {
         const currentTabControlIndex = this.tabItems.findChildIndexByTabControlId(e.currentTarget.id);
-        const nextIndex = DIRECTION[directionKeyCode] + currentTabControlIndex;
+        const nextIndex              = DIRECTION[directionKeyCode] + currentTabControlIndex;
         this.setFocusOnNextControlByIndex(nextIndex);
     }
 
@@ -189,7 +186,7 @@ export default class Tabs {
         }
     }
 
-    handleVerticalOrientationTabControlKeyUp = (e) => {
+    handleVerticalOrientationTabControlKeyUp(e) {
         switch (e.keyCode) {
             case KEY.UP:
                 this.setFocusOnNextControlByDirection(e, KEY.UP);
@@ -209,7 +206,7 @@ export default class Tabs {
         }
     }
 
-    handleHorizontalOrientationTabControlKeyUp = (e) => {
+    handleHorizontalOrientationTabControlKeyUp(e) {
         switch (e.keyCode) {
             case KEY.LEFT:
                 this.setFocusOnNextControlByDirection(e, KEY.LEFT);
@@ -249,5 +246,10 @@ export default class Tabs {
             case KEY.END:
                 e.preventDefault();
         }
+    }
+
+    handleTabControlClick = (e) => {
+        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
+        this.activateSelectedTabControl(selectedTabControl)
     }
 }
