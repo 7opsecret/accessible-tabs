@@ -13,6 +13,7 @@ This component are fully compliant with w3.org. For more details please refer th
 | Safari          | 14.0          |
 | Mozilla Firefox | 89.0.1        |
 | Microsoft Edge  | 91.0.864.59.  |
+
 ## Installation
 
 You can install using the command below in your terminal.
@@ -36,13 +37,13 @@ $ npm start
 You can run unit test using the command below in your terminal.
 
 ```shell
-$ npm test
+$ npm run test:unit
 ```
 
 For watching:
 
 ```shell
-$ npm run test:watch
+$ npm run test:unit:watch
 ```
 
 ### For Integration tests:
@@ -50,7 +51,13 @@ $ npm run test:watch
 > Note: You'll need to make sure have local development server `$ npm start` running before using the command below in your terminal:
 
 ```shell
-$ npm run cypress:open
+$ npm run test:cypress
+```
+
+To open the Cypress Test Runner GUI:
+
+```shell
+$ npm run test:cypress:open
 ```
 
 ## Usage

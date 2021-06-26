@@ -8,9 +8,10 @@
   },
   "scripts": {
     "start": "parcel src/demo.html",
-    "cypress:open": "cypress open",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test:cypress": "cypress run",
+    "test:cypress:open": "cypress open",
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",
