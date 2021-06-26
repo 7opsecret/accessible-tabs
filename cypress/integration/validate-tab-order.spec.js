@@ -27,13 +27,20 @@ const expectFocusedTabControlIsActive = ({
         .and('contain.text', containText);
 }
 
-describe('Validate tab order works correctly', () => {
+const expectHistoryStateToBeNull = () => {
+    cy.window()
+        .then((win) => {
+            expect(win.history.state).to.be.null;
+        });
+}
+
+describe('Validate TAB order works correctly', () => {
     before(() => {
         cy.visit('/');
         cy.injectAxe();
     });
 
-    it('should tab order works correctly', () => {
+    it('should Horizontal Tabs 1 TAB order works correctly', () => {
         cy.get('body')
             .tab();
 
@@ -53,6 +60,10 @@ describe('Validate tab order works correctly', () => {
             containText: 'With horizontal orientation. You can navigate between'
         });
 
+        expectHistoryStateToBeNull();
+    });
+
+    it('should Horizontal Tabs 2 TAB order works correctly', () => {
         cy.focused()
             .tab();
 
@@ -72,6 +83,10 @@ describe('Validate tab order works correctly', () => {
             containText: 'Tab 2-1 Lorem ipsum dolor sit amet, consectetur adipiscing elit'
         });
 
+        expectHistoryStateToBeNull();
+    });
+
+    it('should Vertical Tabs 1 TAB order works correctly', () => {
         cy.focused()
             .tab();
 
@@ -90,6 +105,8 @@ describe('Validate tab order works correctly', () => {
             ariaLabelledBy: 'tab-control-vertical-tabs-1-item-1',
             containText: 'With vertical orientation. You can navigate between'
         });
+
+        expectHistoryStateToBeNull();
     });
 
     it('should pass accessibility test', () => {

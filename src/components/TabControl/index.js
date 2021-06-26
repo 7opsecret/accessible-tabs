@@ -21,8 +21,7 @@ export default class TabControl {
             title,
             onClick,
             onKeyUp,
-            onKeyDown,
-            onFocus
+            onKeyDown
         } = {}
     ) {
         assertHtmlElement(element, '[TabControl] Invalid HTML Element (args[0])');
@@ -36,7 +35,6 @@ export default class TabControl {
         this.onClick     = onClick;
         this.onKeyUp     = onKeyUp;
         this.onKeyDown   = onKeyDown;
-        this.onFocus     = onFocus;
 
         this.mount();
     }
@@ -105,10 +103,6 @@ export default class TabControl {
             {
                 eventName: 'keydown',
                 handler: this.onKeyDown
-            },
-            {
-                eventName: 'focus',
-                handler: this.onFocus
             }
         ].forEach(({ eventName, handler }) => {
             if (isFunction(handler)) {

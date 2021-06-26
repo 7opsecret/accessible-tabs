@@ -116,7 +116,7 @@ export default class Tabs {
                 associateId: tabPanelId,
                 defaultSelected,
                 id: tabControlId,
-                onFocus: this.handleTabControlFocus,
+                onClick: this.handleTabControlClick,
                 onKeyUp: this.handleTabControlKeyUp,
                 onKeyDown: this.handleTabControlKeyDown,
                 title: tabTitle
@@ -136,8 +136,7 @@ export default class Tabs {
         this.element.insertBefore(this.tabList.element, this.element.firstChild);
     }
 
-    handleTabControlFocus = (e) => {
-        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
+    activateSelectedTabControl = (selectedTabControl) => {
         this.selectNextTabByControl(selectedTabControl);
 
         ActivatedTabsHistoryService.save({
@@ -147,6 +146,11 @@ export default class Tabs {
                 associateId: selectedTabControl.associateId
             }
         });
+    }
+
+    handleTabControlClick = (e) => {
+        const selectedTabControl = this.tabItems.findChildByTabControlId(e.currentTarget.id)?.tabControl;
+        this.activateSelectedTabControl(selectedTabControl)
     }
 
     selectNextTabByControl(nextTabControl) {
@@ -177,7 +181,12 @@ export default class Tabs {
             _nextIndex = 0;
         }
 
-        this.tabItems.findChildByIndex(_nextIndex).tabControl.element.focus();
+        const selectedTabControl = this.tabItems.findChildByIndex(_nextIndex).tabControl;
+
+        if(selectedTabControl) {
+            this.activateSelectedTabControl(selectedTabControl);
+            selectedTabControl.element.focus();
+        }
     }
 
     handleVerticalOrientationTabControlKeyUp = (e) => {

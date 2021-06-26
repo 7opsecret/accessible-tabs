@@ -96,25 +96,6 @@ describe('Component: TabControl', () => {
         expect(mockOnKeyDown).toHaveBeenCalledTimes(1);
     });
 
-    it('should onFocus handler binded and fired when focus is set', () => {
-        // Arrange
-        const mockOnFocus = jest.fn();
-        const tabControl = new TabControl(
-            controlEl,
-            {
-                onFocus: mockOnFocus
-            }
-        );
-        // Note: Focus won't work if element not in document body
-        document.body.appendChild(tabControl.element);
-
-        // Act
-        tabControl.element.focus();
-
-        // Assert
-        expect(mockOnFocus).toHaveBeenCalledTimes(1);
-    });
-
     describe('When "defaultSelected" is true', () => {
         let tabControl;
 
