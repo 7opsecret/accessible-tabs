@@ -1,1 +1,1 @@
-export const createClassInstance = (Klass, ...args) => () => new Klass(...args);
+export const createClassInstance = (Klass, ...args) => () => new Klass(...args)

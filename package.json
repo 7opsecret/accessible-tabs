@@ -11,7 +11,8 @@
     "test:cypress": "cypress run",
     "test:cypress:open": "cypress open",
     "test:unit": "jest",
-    "test:unit:watch": "jest --watch"
+    "test:unit:watch": "jest --watch",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Danny Chin",
@@ -20,10 +21,19 @@
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.5",
     "axe-core": "^4.2.3",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "^27.0.2",
     "cypress": "^7.5.0",
     "cypress-axe": "^0.12.2",
     "cypress-plugin-tab": "^1.0.5",
+    "eslint": "^7.29.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-chai-friendly": "^0.7.1",
+    "eslint-plugin-cypress": "^2.11.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
     "jest": "^27.0.4",
     "parcel": "^2.0.0-beta.3.1"
   }

@@ -1,32 +1,32 @@
-import { isArray } from '~/src/utils/assert';
+import { isArray } from '~/src/utils/assert'
 
 export const PubSubService = (() => {
-    const subscribers = {};
+  const subscribers = {}
 
-    const subscribe = (event, callback) => {
-        if(!isArray(subscribers[event])) {
-            subscribers[event] = [];
-        }
-
-        subscribers[event] = [
-            ...subscribers[event],
-            callback
-        ];
+  const subscribe = (event, callback) => {
+    if (!isArray(subscribers[event])) {
+      subscribers[event] = []
     }
 
-    const publish = (event, payload) => {
-        if (!isArray(subscribers[event])) {
-            return;
-        }
+    subscribers[event] = [
+      ...subscribers[event],
+      callback
+    ]
+  }
 
-        const callback = (cb) => cb(payload);
-
-        subscribers[event]
-            .forEach(callback);
+  const publish = (event, payload) => {
+    if (!isArray(subscribers[event])) {
+      return
     }
 
-    return {
-        subscribe,
-        publish
-    }
-})();
+    const callback = (cb) => cb(payload)
+
+    subscribers[event]
+      .forEach(callback)
+  }
+
+  return {
+    subscribe,
+    publish
+  }
+})()

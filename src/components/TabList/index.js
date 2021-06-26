@@ -1,52 +1,52 @@
-import './styles.css';
+import './styles.css'
 
 // Exception(s) Handling:
-import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement';
+import { assertHtmlElement } from '~/src/exceptions/assert-htmlelement'
 
 // Service(s):
-import { AriaValidationService } from '~/src/services/aria-validation';
+import { AriaValidationService } from '~/src/services/aria-validation'
 
 // Util(s):
-import { setAttributes } from '~/src/utils/dom';
+import { setAttributes } from '~/src/utils/dom'
 
 // Enum(s):
-import { ARIA_ORIENTATION } from '~/src/enums/aria-values';
+import { ARIA_ORIENTATION } from '~/src/enums/aria-values'
 
 // Local Config(s):
-export const TAB_CONTROL_BASE_CLASSNAME = 'tab-list';
+export const TAB_CONTROL_BASE_CLASSNAME = 'tab-list'
 
 export default class TabList {
-    constructor(
-        element,
-        {
-            ariaLabel,
-            ariaOrientation
-        } = {}
-    ) {
-        assertHtmlElement(element, '[TabList] Invalid HTML Element (args[0])');
+  constructor (
+    element,
+    {
+      ariaLabel,
+      ariaOrientation
+    } = {}
+  ) {
+    assertHtmlElement(element, '[TabList] Invalid HTML Element (args[0])')
 
-        this.element         = element;
-        this.ariaLabel       = ariaLabel;
-        this.ariaOrientation = AriaValidationService.isValidOrientation(ariaOrientation)
-            ? ariaOrientation.toLowerCase()
-            : ARIA_ORIENTATION.HORIZONTAL; // fallback to horizontal
+    this.element = element
+    this.ariaLabel = ariaLabel
+    this.ariaOrientation = AriaValidationService.isValidOrientation(ariaOrientation)
+      ? ariaOrientation.toLowerCase()
+      : ARIA_ORIENTATION.HORIZONTAL // fallback to horizontal
 
-        this.mount();
-    }
+    this.mount()
+  }
 
-    mount() {
-        this.element.classList.add(TAB_CONTROL_BASE_CLASSNAME, TAB_CONTROL_BASE_CLASSNAME + '--' + this.ariaOrientation);
-        this.setA11yAttributes();
-    }
+  mount () {
+    this.element.classList.add(TAB_CONTROL_BASE_CLASSNAME, TAB_CONTROL_BASE_CLASSNAME + '--' + this.ariaOrientation)
+    this.setA11yAttributes()
+  }
 
-    setA11yAttributes() {
-        setAttributes(
-            this.element,
-            {
-                role: 'tablist',
-                'aria-orientation' : this.ariaOrientation,
-                ...this.ariaLabel && { 'aria-label': this.ariaLabel }
-            }
-        )
-    }
+  setA11yAttributes () {
+    setAttributes(
+      this.element,
+      {
+        role: 'tablist',
+        'aria-orientation': this.ariaOrientation,
+        ...this.ariaLabel && { 'aria-label': this.ariaLabel }
+      }
+    )
+  }
 }

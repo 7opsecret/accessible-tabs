@@ -1,0 +1,32 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "plugins": ["jest", "cypress"],
+  "extends": [
+    "standard"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": ["cypress/**/*.js"],
+      "extends": [
+        "plugin:cypress/recommended",
+        "plugin:chai-friendly/recommended"
+      ],
+      "plugins": [
+        "chai-friendly"
+      ]
+    },
+    {
+      "files": ["src/**/*.spec.js"],
+      "extends": ["plugin:jest/recommended"]
+    }
+  ],
+  "rules": {}
+}

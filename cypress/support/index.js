@@ -1,3 +1,3 @@
-import 'cypress-axe';
-import 'cypress-plugin-tab';
-import './helpers';
+import 'cypress-axe'
+import 'cypress-plugin-tab'
+import './helpers'

@@ -1,44 +1,44 @@
 // Service(s):
-import { PubSubService } from '~/src/services/pub-sub';
+import { PubSubService } from '~/src/services/pub-sub'
 
 // Util(s):
-import { isFunction } from '~/src/utils/assert';
+import { isFunction } from '~/src/utils/assert'
 
 // Local Config(s):
-const POPSTATE_EVENT_NAME = 'popstate';
+const POPSTATE_EVENT_NAME = 'popstate'
 
 export const HistoryApi = (() => {
-    const getState = () => history.state;
+  const getState = () => history.state
 
-    const pushState = (...args) => history.pushState(...args);
+  const pushState = (...args) => history.pushState(...args)
 
-    const replaceState = (...args) => history.replaceState(...args);
+  const replaceState = (...args) => history.replaceState(...args)
 
-    const addEventListener = (callback) => {
-        if(!isFunction(callback)) {
-            return;
-        }
-
-        PubSubService.subscribe(POPSTATE_EVENT_NAME, callback);
-    };
-
-    const _popStateCallback = (event) => {
-        PubSubService.publish(POPSTATE_EVENT_NAME, event);
+  const addEventListener = (callback) => {
+    if (!isFunction(callback)) {
+      return
     }
 
-    const _init = () => {
-        window.addEventListener(
-            POPSTATE_EVENT_NAME,
-            _popStateCallback
-        );
-    }
+    PubSubService.subscribe(POPSTATE_EVENT_NAME, callback)
+  }
 
-    _init();
+  const _popStateCallback = (event) => {
+    PubSubService.publish(POPSTATE_EVENT_NAME, event)
+  }
 
-    return {
-        pushState,
-        replaceState,
-        getState,
-        addEventListener
-    };
-})();
+  const _init = () => {
+    window.addEventListener(
+      POPSTATE_EVENT_NAME,
+      _popStateCallback
+    )
+  }
+
+  _init()
+
+  return {
+    pushState,
+    replaceState,
+    getState,
+    addEventListener
+  }
+})()
