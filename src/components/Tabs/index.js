@@ -22,7 +22,7 @@ import { uid } from '~/src/utils/uid';
 
 // Local Config(s):
 const TABS_BASE_CLASSNAME = 'tabs';
-export const PANEL_CSS_SELECTOR = 'js-tab-panel';
+const PANEL_CSS_SELECTOR  = 'js-tab-panel';
 
 export default class Tabs {
     constructor(
