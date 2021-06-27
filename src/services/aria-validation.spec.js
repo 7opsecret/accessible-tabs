@@ -2,17 +2,23 @@ import { AriaValidationService } from './aria-validation'
 
 describe('Service: AriaValidationService', () => {
   it.each`
-    maybeMatchValue   | expected
-    ${'vertical'}   | ${true}
-    ${'horizontal'} | ${true}
-    ${'HoRiZoNtAL'} | ${true}
-    ${'flipped'}    | ${false}
-    `('should #isValidOrientation return $expected when value is $maybeMatchValue', ({
-    maybeMatchValue,
+    maybeValidOrientation | expected
+    ${'VERTICAL'}         | ${'vertical'}
+    ${'vertical'}         | ${'vertical'}
+    ${'horizontal'}       | ${'horizontal'}
+    ${'HoRiZoNtAL'}       | ${'horizontal'}
+    ${'flipped'}          | ${'horizontal'}
+    ${true}               | ${'horizontal'}
+    ${false}              | ${'horizontal'}
+    ${0}                  | ${'horizontal'}
+    ${1}                  | ${'horizontal'}
+    ${null}               | ${'horizontal'}
+    `('should #returnValidOrientation return $expected when value is $maybeValidOrientation', ({
+    maybeValidOrientation,
     expected
   }) => {
     // Act
-    const received = AriaValidationService.isValidOrientation(maybeMatchValue)
+    const received = AriaValidationService.returnValidOrientation(maybeValidOrientation)
 
     // Assert
     expect(received).toBe(expected)

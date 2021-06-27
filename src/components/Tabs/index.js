@@ -41,9 +41,7 @@ export default class Tabs {
     this.tabItemsService = null
     this.tabList = null
     this.tabsId = element.id || `tabs-${uid()}`
-    this.orientation = AriaValidationService.isValidOrientation(orientation)
-      ? orientation.toLowerCase()
-      : ARIA_ORIENTATION.HORIZONTAL // fallback to horizontal
+    this.orientation = AriaValidationService.returnValidOrientation(orientation) // fallback to horizontal if invalid
     this.isVerticalOrientation = this.orientation === ARIA_ORIENTATION.VERTICAL
 
     this.mount()

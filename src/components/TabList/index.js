@@ -10,9 +10,6 @@ import { AriaValidationService } from '~/src/services/aria-validation'
 // Util(s):
 import { setAttributes } from '~/src/utils/dom'
 
-// Enum(s):
-import { ARIA_ORIENTATION } from '~/src/enums/aria-values'
-
 // Local Config(s):
 export const TAB_CONTROL_BASE_CLASSNAME = 'tab-list'
 
@@ -28,9 +25,7 @@ export default class TabList {
 
     this.element = element
     this.ariaLabel = ariaLabel
-    this.ariaOrientation = AriaValidationService.isValidOrientation(ariaOrientation)
-      ? ariaOrientation.toLowerCase()
-      : ARIA_ORIENTATION.HORIZONTAL // fallback to horizontal
+    this.ariaOrientation = AriaValidationService.returnValidOrientation(ariaOrientation)
 
     this.mount()
   }
