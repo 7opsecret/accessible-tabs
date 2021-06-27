@@ -22,7 +22,7 @@ You can install using the command below in your terminal.
 $ npm install
 ```
 
-## Development / Demo Preview
+## Development
 
 You can start local development using the command below (after completed the installation steps mentioned above) in your terminal and paste `http://localhost:1234` into your browser when it's ready.
 
@@ -58,6 +58,14 @@ To open the Cypress Test Runner GUI:
 
 ```shell
 $ npm run test:cypress:open
+```
+
+## Lint
+
+You can run lint using the command below in your terminal.
+
+```shell
+$ npm run lint
 ```
 
 ## Usage
