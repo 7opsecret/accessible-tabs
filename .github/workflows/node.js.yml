@@ -30,3 +30,9 @@ jobs:
     - run: npm run lint
     # Run Unit Test
     - run: npm run test:unit
+    # Run Cypress Test
+    - name: Cypress Test
+      uses: cypress-io/github-action@v2
+      with:
+        start: npm start
+        wait-on: 'http://localhost:1234'
