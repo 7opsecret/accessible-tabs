@@ -177,7 +177,7 @@ export default class Tabs {
       _nextIndex = 0
     }
 
-    const selectedTabControl = this.tabItemsService.findChildByIndex(_nextIndex).tabControl
+    const selectedTabControl = this.tabItemsService.findChildByIndex(_nextIndex)?.tabControl
 
     if (selectedTabControl) {
       this.activateSelectedTabControl(selectedTabControl)
