@@ -12,7 +12,8 @@
     "test:cypress:open": "cypress open",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "Danny Chin",
@@ -35,6 +36,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "jest": "^27.0.4",
-    "parcel": "^2.0.0-beta.3.1"
+    "parcel": "^2.0.0-beta.3.1",
+    "husky": "^6.0.0"
   }
 }
