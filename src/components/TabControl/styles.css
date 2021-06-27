@@ -1,26 +1,26 @@
 .tab-control {
-    background-color: white;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 1.2em;
-    font-weight: 400;
-    margin: 0 5px;
-    padding: .75em 1em;
-    position: relative;
-    transition: .2s ease-in-out;
-    white-space: nowrap;
+  background-color: white;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.2em;
+  font-weight: 400;
+  margin: 0 5px;
+  padding: 0.75em 1em;
+  position: relative;
+  transition: 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 .tab-control:hover,
 .tab-control:focus {
-    border-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .tab-control--selected {
-    background-color: var(--primary-color);
-    color: #fff;
-    font-weight: 500;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 500;
 }

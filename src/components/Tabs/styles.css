@@ -1,10 +1,9 @@
-
 :root {
-    --primary-color: #7B1CD8;
-    --light-grey: #ececec;
+  --primary-color: #7b1cd8;
+  --light-grey: #ececec;
 }
 
 .tabs--vertical {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
