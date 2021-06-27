@@ -12,7 +12,7 @@ This component are fully compliant with w3.org. For more details please refer th
 | Google Chrome   | 91.0.4472.114 |
 | Safari          | 14.0          |
 | Mozilla Firefox | 89.0.1        |
-| Microsoft Edge  | 91.0.864.59.  |
+| Microsoft Edge  | 91.0.864.59   |
 
 ## Installation
 

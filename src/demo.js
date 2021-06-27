@@ -1,6 +1,10 @@
 /* eslint-disable no-new */
-import Tabs from './components/Tabs'
+
+// Stylesheet(s):
 import './demo.css'
+
+// Component(s):
+import Tabs from './components/Tabs'
 
 new Tabs(
   document.getElementById('horizontal-tabs-1')
