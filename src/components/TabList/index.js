@@ -31,8 +31,15 @@ export default class TabList {
   }
 
   mount () {
-    this.element.classList.add(TAB_CONTROL_BASE_CLASSNAME, TAB_CONTROL_BASE_CLASSNAME + '--' + this.ariaOrientation)
+    this.setDefaultCssClasses()
     this.setA11yAttributes()
+  }
+
+  setDefaultCssClasses () {
+    this.element.classList.add(
+      TAB_CONTROL_BASE_CLASSNAME,
+      TAB_CONTROL_BASE_CLASSNAME + '--' + this.ariaOrientation
+    )
   }
 
   setA11yAttributes () {
