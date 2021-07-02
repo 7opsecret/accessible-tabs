@@ -1,13 +1,13 @@
 .tab-control {
   background-color: white;
-  border-radius: 4px;
-  border: 2px solid transparent;
+  border-radius: .21em;
+  border: .11em solid transparent;
   box-sizing: border-box;
   cursor: pointer;
   display: inline-block;
   font-size: 1.2em;
   font-weight: 400;
-  margin: 0 5px;
+  margin: 0 .26em;
   padding: 0.75em 1em;
   position: relative;
   transition: 0.2s ease-in-out;
