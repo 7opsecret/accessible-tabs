@@ -276,7 +276,7 @@ describe('Component: Tabs', () => {
   })
 
   it.each`
-    orientation     | keyNameToVerify | keyCodesOrderToFire        | expectedSelectedIndex
+    orientation     | keyNameToVerify | keyCodesOrderToFire      | expectedSelectedIndex
     ${'horizontal'} | ${'Home'}       | ${[KEY.RIGHT, KEY.HOME]} | ${0}
     ${'horizontal'} | ${'End'}        | ${[KEY.END]}             | ${2}
     ${'horizontal'} | ${'Left'}       | ${[KEY.END, KEY.LEFT]}   | ${1}
