@@ -83,7 +83,8 @@ export default class Tabs {
     if (!tabControlInstance) return
     this.selectNextTabByControl(tabControlInstance)
     ActivatedTabsHistoryService.replaceState({
-      [this.tabsId]: {
+      tabsId: this.tabsId,
+      selectedTabState: {
         id: tabControlInstance.id,
         associateId: tabControlInstance.associateId
       }

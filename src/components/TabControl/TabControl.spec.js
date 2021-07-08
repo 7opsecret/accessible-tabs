@@ -1,8 +1,10 @@
-import { fireKeyUpEvent, fireKeyDownEvent } from '~/test-helpers/events'
 import TabControl from '.'
 
+// Test Helper(s):
+import { fireKeyUpEvent, fireKeyDownEvent } from '~/test-helpers/events'
+import { createClassInstance } from '~/test-helpers/class'
+
 describe('Component: TabControl', () => {
-  const initTabControl = (...args) => () => new TabControl(args)
   let controlEl
 
   beforeEach(() => {
@@ -11,7 +13,7 @@ describe('Component: TabControl', () => {
 
   it('should throw error if "TabControl" created without valid "element" payload', () => {
     // Assert
-    expect(initTabControl()).toThrow('[TabControl] Invalid HTML Element (args[0])')
+    expect(createClassInstance(TabControl)).toThrow('[TabControl] Invalid HTML Element (args[0])')
   })
 
   it('should element attributes changed as expected when instance selected state is updated', () => {

@@ -165,9 +165,10 @@ describe('Service: ActivatedTabsHistoryService', () => {
         }
       }
       const mockNewTabsState = {
-        tdNew: {
+        tabsId: 'tdNew',
+        selectedTabState: {
           id: 'tdnc-item-5',
-          associatedId: 'tdnp-item-5'
+          associateId: 'tdnp-item-5'
         }
       }
       HistoryApi.getState.mockReturnValue(mockExistingState)
@@ -185,7 +186,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
           },
           tdNew: {
             id: 'tdnc-item-5',
-            associatedId: 'tdnp-item-5'
+            associateId: 'tdnp-item-5'
           }
         }
       }
@@ -203,14 +204,15 @@ describe('Service: ActivatedTabsHistoryService', () => {
           },
           tdNew: {
             id: 'tdnc-item-5',
-            associatedId: 'tdnp-item-5'
+            associateId: 'tdnp-item-5'
           }
         }
       }
       const mockUpdatedTabsState = {
-        tdNew: {
+        tabsId: 'tdNew',
+        selectedTabState: {
           id: 'tdnc-item-latest',
-          associatedId: 'tdnp-item-latest'
+          associateId: 'tdnp-item-latest'
         }
       }
       HistoryApi.getState.mockReturnValue(mockExistingState)
@@ -228,7 +230,7 @@ describe('Service: ActivatedTabsHistoryService', () => {
           },
           tdNew: {
             id: 'tdnc-item-latest',
-            associatedId: 'tdnp-item-latest'
+            associateId: 'tdnp-item-latest'
           }
         }
       }
@@ -247,7 +249,8 @@ describe('Service: ActivatedTabsHistoryService', () => {
         }
       }
       const mockUpdatedTabsState = {
-        td1: {
+        tabsId: 'td1',
+        selectedTabState: {
           id: 'tc-item-1',
           associateId: 'tp-item-2'
         }
