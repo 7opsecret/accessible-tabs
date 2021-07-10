@@ -76,7 +76,16 @@ export const ActivatedTabsHistoryService = (() => {
     HistoryApi.pushState(nextState, '', nextUrl)
   }
 
-  const replaceState = (newTabsState) => {
+  const replaceState = ({
+    tabsId,
+    selectedTabState
+  }) => {
+    const newTabsState = {
+      [tabsId]: {
+        id: selectedTabState?.id,
+        associateId: selectedTabState?.associateId
+      }
+    }
     const nextState = _mergeTabsState(newTabsState)
 
     if (_isNextStateSameAsPrevState(nextState)) {
